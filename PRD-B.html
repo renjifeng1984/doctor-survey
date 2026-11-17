@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>路线 B · 话术脚本（红斑狼疮示例）</title>
+<style>
+  :root{--accent:#2a1ba8;--accent-soft:rgba(42,27,168,.07);--ink:#14123f;--ink2:#605f72;--ink3:#8e8fa8;
+    --line:#e6e5eb;--bg:#f4f4fa;--surface:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.75;
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .layout{display:grid;grid-template-columns:236px minmax(0,1fr);gap:28px;max-width:1180px;margin:0 auto;padding:34px 28px 80px}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}.toc{display:none}}
+
+  .toc{position:sticky;top:28px;align-self:start;max-height:calc(100vh - 56px);overflow:auto;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 14px}
+  .toc .tt{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;margin:0 0 10px}
+  .toc a{display:block;padding:6px 8px;border-radius:8px;font-size:13px;color:var(--ink2)}
+  .toc a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none}
+
+  .doc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:36px 42px 44px}
+  @media (max-width:900px){.doc{padding:24px 20px 30px}}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+  .btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:9px;
+    background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:600}
+  .btn:hover{background:rgba(42,27,168,.14);text-decoration:none}
+
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:.01em}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:6px}
+  h3{font-size:15.5px;margin:26px 0 8px;color:#2b2a52}
+  h2,h3{scroll-margin-top:22px}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0;padding-left:22px}
+  li{margin:5px 0}
+  b{color:#0f0d34}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  code{background:#f3f2f9;border-radius:4px;padding:1px 5px;font-size:12.5px;color:#4a3fd0}
+  blockquote{margin:16px 0;padding:12px 16px;background:#f8f8fd;border-left:3px solid #c9c4ee;
+    border-radius:0 10px 10px 0;color:var(--ink2)}
+  blockquote p{margin:0}
+  pre.code{margin:14px 0;padding:14px 16px;background:#f8f8fd;border:1px solid var(--line);border-radius:10px;
+    font-size:12.5px;line-height:1.85;color:#2b2a52;white-space:pre-wrap;font-family:'SFMono-Regular',Consolas,monospace}
+
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:#f6f5fc;font-weight:700;color:#2b2a52;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fbfbfe}
+
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <p class="tt">目录</p>
+    <a href="#1-定位">1. 定位</a><a href="#2-目标与非目标">2. 目标与非目标</a><a href="#3-能力边界">3. 能力边界</a><a href="#4-谁走这条路">4. 谁走这条路</a><a href="#5-开场">5. 开场</a><a href="#6-题面脚本">6. 题面脚本</a><a href="#7-轮次与节奏">7. 轮次与节奏</a><a href="#8-完成判定与登记">8. 完成判定与登记</a><a href="#9-酬谢发放">9. 酬谢发放</a><a href="#10-异常与边界">10. 异常与边界</a><a href="#11-与小程序线的关系">11. 与小程序线的关系</a><a href="#12-指标">12. 指标</a><a href="#13-分期">13. 分期</a><a href="#14-待确认">14. 待确认</a>
+  </nav>
+  <article class="doc">
+    <h1 id="医学调研-企微聊天版-路线-b-产品需求文档">医学调研 · 企微聊天版（路线 B）产品需求文档</h1>
+<div class="tw"><table><thead><tr><th>版本</th><th>日期</th><th>说明</th></tr></thead><tbody><tr><td>V0.3</td><td>2026-11-17</td><td>题量 8 → 32：开场分首次/续聊、按模块分批、完成判定与指标同步调整</td></tr><tr><td>V0.2</td><td>2026-11-17</td><td>补 §11.1 分流判断：什么时候转聊天线、转线要做什么；明确「分叉只有一次」</td></tr><tr><td>V0.1</td><td>2026-11-17</td><td>首版：不依赖小程序，CC 在企微单聊里逐题提问，聊天记录即为答案载体</td></tr></tbody></table></div>
+<blockquote>前提：这条线是<b>兜底路线</b>，与小程序线（路线 A）并行，不替代。目标是把"不肯进小程序"的医生捞回来。</blockquote>
+<hr>
+<h2 id="1-定位">1. 定位</h2>
+<p>一条不打开小程序的调研路线：<b>CC 在企业微信单聊里按脚本逐题提问，医生用文字回答，全程不离开聊天窗口。</b></p>
+<p>医生侧的成本只有"打字"，没有安装、没有登录、没有跳转。</p>
+<h2 id="2-目标与非目标">2. 目标与非目标</h2>
+<p><b>目标</b></p>
+<ul><li>覆盖不肯进小程序的医生，把整体完成率从当前水平往上拉；</li><li>医生侧零门槛：不装、不登、不跳。</li></ul>
+<p><b>非目标（本期不做）</b></p>
+<ul><li>不做机器人自动提问——官方能力不支持（见第 3 节）；</li><li>不做答案结构化入库——本期答案只存在于聊天记录里；</li><li>不做语音转写、不做图片识别；</li><li>不做聊天以外的任何跳转。</li></ul>
+<h2 id="3-能力边界">3. 能力边界</h2>
+<p>这条线怎么设计，完全由企微的能力决定：</p>
+<div class="tw"><table><thead><tr><th>能力</th><th>是否可用</th><th>说明</th></tr></thead><tbody><tr><td>官方机器人进外部单聊自动对话</td><td><b>不支持</b></td><td>官方明确：外部 1v1 不提供机器人服务</td></tr><tr><td>以员工身份调 API 自动回复客户</td><td><b>不支持</b>，属风控红线</td><td>会被判定异常并限制账号</td></tr><tr><td>在外部群加智能机器人</td><td>不支持</td><td>仅内部群可用</td></tr><tr><td>会话内容存档拉取单聊</td><td>可用，但需对方同意</td><td>本期<b>不启用</b>（第 8 节）</td></tr><tr><td>第三方 RPA / Hook 外挂</td><td>官方不支持</td><td>有封号风险，不采用</td></tr></tbody></table></div>
+<p><b>结论</b>：问题只能由 CC 手动逐条发。所谓"自动化"只可能发生在企业侧（解析、登记），不发生在对话本身。</p>
+<h2 id="4-谁走这条路">4. 谁走这条路</h2>
+<p>分流顺序：</p>
+<ol><li><b>先发小程序卡片</b>（路线 A，成本最低）；</li><li>医生出现以下任一反应 → 转聊天版：</li></ol>
+<ul><li>明确说"不装/不会用小程序"</li><li>说"你直接问吧"</li><li>24 小时内三次未打开卡片</li></ul>
+<ol start="3"><li>转聊天版后，小程序侧该任务标记为<b>「已转人工」</b>，不再推送、不再计入待办。</li></ol>
+<p><b>一条铁律</b>：同一个人、同一个项目，只能走一条线。两头都做等于让医生答两遍。</p>
+<h2 id="5-开场">5. 开场</h2>
+<p>首版按 8 题设计，现按 32 题执行，因此开场要分两次话术：首次、续聊。</p>
+<p><b>首次</b>（不超过 3 行）：</p>
+<blockquote>王主任您好，我们是做风湿免疫领域调研的。想请您聊聊系统性红斑狼疮的诊疗习惯，题目分三次问，每次十分钟左右，您方便的时候我接着问。完成后有劳务酬谢。</blockquote>
+<p><b>续聊</b>（一句话，不重复自我介绍）：</p>
+<blockquote>王主任，接着上次的往下问，还有二十来分钟的量，您现在方便吗？</blockquote>
+<p>要点：</p>
+<ul><li><b>先给"不用装"</b>——这是转过来的原因，第一句就要回应；</li><li><b>给出时长</b>——医生据此决定现在答还是等会儿；</li><li><b>给出回报</b>——没有回报的对话会被当闲聊。</li></ul>
+<h2 id="6-题面脚本">6. 题面脚本</h2>
+<p>题目与小程序版一致（同一套 32 题），按六个模块组织：</p>
+<div class="tw"><table><thead><tr><th>模块</th><th>内容</th><th>题号</th></tr></thead><tbody><tr><td>A 患者画像</td><td>看哪类、多少例、多重</td><td>1–5</td></tr><tr><td>B 诊断检查</td><td>初开什么、多久复查、可及性</td><td>6–10</td></tr><tr><td>C 活动判断</td><td>怎么算活动、怎么算难治</td><td>11–15</td></tr><tr><td>D 治疗方案</td><td>一线、进阶、联合、减量</td><td>16–23</td></tr><tr><td>E 并发症</td><td>长期用药的副作用管理</td><td>24–28</td></tr><tr><td>F 随访依从</td><td>频率、失访、教育</td><td>29–32</td></tr></tbody></table></div>
+<p>完整逐题脚本见《路线 B · 话术脚本》。</p>
+<p><b>每题的结构固定</b>：编号 + 问题 + 一个例子，不超过 2 行。</p>
+<p>示例：</p>
+<pre class="code">1/32 您门诊的狼疮患者，以哪类为主？
+     新发、复发，还是长期维持的？
+
+2/32 一年大概看多少例？
+     粗略量级就行
+
+3/32 狼疮肾炎、神经精神狼疮这类重症，占多少？
+     答不出可以填「不详」</pre>
+<p>规则：</p>
+<ul><li><b>封闭题给选项</b>（是/否、参与过/仅门诊），不要让医生自己组织语言；</li><li><b>开放题强调"口语化就行"</b>，否则医生会写长文或干脆不答；</li><li>一次只发一题，医生答完再发下一题；</li><li>医生答非所问时，<b>复述问题 + 再给一个例子</b>，最多两次。</li></ul>
+<h2 id="7-轮次与节奏">7. 轮次与节奏</h2>
+<div class="tw"><table><thead><tr><th>项</th><th>规则</th></tr></thead><tbody><tr><td>单题消息长度</td><td>≤ 2 行</td></tr><tr><td>医生超时未答</td><td>不催，等</td></tr><tr><td>中断后续接</td><td>24 小时内可继续，从断点那道题接着问</td></tr><tr><td>一次聊多少</td><td><b>10–11 题一轮，分三次</b>；医生在第 12–15 题后开始敷衍</td></tr><tr><td>超过 24 小时</td><td>记为「未完成」，次日追一次，仍无答复则关闭</td></tr><tr><td>一次性答完 32 题</td><td>不推荐；医生硬要一次答完也允许，CC 按编号核对缺哪题</td></tr></tbody></table></div>
+<h2 id="8-完成判定与登记">8. 完成判定与登记</h2>
+<p><b>这里有一个必须先讲清的设计取舍。</b></p>
+<p>本期不做答案入库，所以答案是<b>存在企微聊天记录里的</b>。但完全不记录任何东西，会带来三个问题：发不出酬谢、算不出完成率、防不了重复。</p>
+<p>因此：</p>
+<div class="tw"><table><thead><tr><th>记录什么</th><th>记在哪</th><th>说明</th></tr></thead><tbody><tr><td>项目 / 医生 / 完成状态 / 完成日期 / 记录人</td><td>后台最小登记</td><td><b>只记状态，不记答案正文</b></td></tr><tr><td>答案原文</td><td>企微聊天记录</td><td>不复制、不导出、不入库</td></tr></tbody></table></div>
+<p><b>完成判定</b>：</p>
+<ul><li><b>完成</b>：32 题都有可读的回答，允许 3 题以内记「不详」；</li><li><b>部分完成</b>：缺 4 题及以上，或某个模块整块缺失；缺的集中在哪个模块要标出来，这决定数据能不能用。</li></ul>
+<h2 id="9-酬谢发放">9. 酬谢发放</h2>
+<ul><li>依据：后台的「完成」登记，不看聊天内容；</li><li>口径：与小程序线一致，不因渠道不同而打折；</li><li><b>部分完成是否发放</b>：本期不发，等第 14 节确认。</li></ul>
+<h2 id="10-异常与边界">10. 异常与边界</h2>
+<div class="tw"><table><thead><tr><th>场景</th><th>处理</th></tr></thead><tbody><tr><td>答非所问</td><td>复述问题 + 换一个例子，最多 2 次；仍不懂 → 记为未答</td></tr><tr><td>只答了一半就消失</td><td>24 小时内追一次；仍无 → 记「部分完成」</td></tr><tr><td>发语音</td><td>请医生"麻烦打字给我，语音我没法记录"；医生坚持 → CC 自己转录成文字回填一句确认</td></tr><tr><td>发截图/照片</td><td>同上，CC 转述成一句话，请医生确认</td></tr><tr><td>医生要求"别记录"</td><td>说明：只用于本次调研，不存系统、不外传</td></tr><tr><td>医生中途要改答案</td><td>直接发更正，<b>以最后一条为准</b></td></tr><tr><td>医生问"这算完成了吗"</td><td>答："我这边核对完就登记，酬谢按之前说的发"</td></tr><tr><td>同一医生被两个项目问</td><td>分开问，一次只做一个项目，做完再约下一个</td></tr><tr><td>医生反过来推销/闲聊</td><td>简短回应后拉回："那我们先把这个问卷过完"</td></tr></tbody></table></div>
+<h2 id="11-与小程序线的关系">11. 与小程序线的关系</h2>
+<h3 id="11-1-分流判断">11.1 分流判断</h3>
+<p>什么时候转 B 线，只有这三个入口，不做更多判断：</p>
+<ol><li>CC 先发小程序卡片，走 A 线；</li><li>出现以下任一情况，转 B 线：</li></ol>
+<ul><li>医生明确说「不装 / 不会用小程序」；</li><li>医生说「你直接问吧」；</li><li>24 小时内三次未打开卡片；</li></ul>
+<ol start="3"><li>转线动作：立刻把小程序侧该任务标「已转人工」，停止推送与催办；</li><li>转线后不再重复邀请，同一项目只走 B 线到底。</li></ol>
+<p>关键：<b>分叉只有一次，发生在发卡片之后</b>。不要一边等医生点卡片、一边在聊天里开始问——那等于两头催，医生会烦。</p>
+<h3 id="11-2-规则">11.2 规则</h3>
+<div class="tw"><table><thead><tr><th>项</th><th>规则</th></tr></thead><tbody><tr><td>关系</td><td><b>并行</b>，聊天版是兜底，不是替代</td></tr><tr><td>互斥</td><td>同一人同一项目只走一条线</td></tr><tr><td>转线</td><td>小程序 → 聊天：标「已转人工」；聊天 → 小程序：不推荐，会打断对话</td></tr><tr><td>完成后同步</td><td>聊天版完成后，小程序侧该任务同步为「已完成（人工）」，避免系统继续催</td></tr><tr><td>数据合并</td><td>两条线的完成状态在后台合并统计，答案不合并（聊天版没有结构化的答案）</td></tr></tbody></table></div>
+<h2 id="12-指标">12. 指标</h2>
+<div class="tw"><table><thead><tr><th>指标</th><th>说明</th><th>目标</th></tr></thead><tbody><tr><td>转人工率</td><td>发过卡片但转聊天版的比例</td><td>观察值，不设目标</td></tr><tr><td>聊天版完成率</td><td>开始对话的医生中答满 32 题的比例</td><td>≥ 70%</td></tr><tr><td>平均轮次</td><td>从开场到最后一题的消息轮数</td><td>约 70 轮（分 3 次）</td></tr><tr><td>CC 单份工时</td><td>一个医生从开场到登记完成的累计耗时</td><td>25–30 分钟</td></tr><tr><td>覆盖率提升</td><td>相比只有小程序线时的总完成数</td><td>提升 ≥ 15%</td></tr></tbody></table></div>
+<h2 id="13-分期">13. 分期</h2>
+<div class="tw"><table><thead><tr><th>期</th><th>范围</th></tr></thead><tbody><tr><td>P0</td><td>开场话术、32 题对话脚本与分批策略、后台最小登记（项目/医生/状态/日期）、酬谢发放</td></tr><tr><td>P1</td><td>登记页做成列表，支持筛选与导出；断点续接提醒</td></tr><tr><td>P2（本期不做）</td><td>会话存档接入、答案自动解析、自动完整性判断</td></tr></tbody></table></div>
+<h2 id="14-待确认">14. 待确认</h2>
+<ol><li><b>部分完成给不给酬谢</b>——不给可能伤感情，给了又会让"答一半"变成策略；</li><li><b>登记落在哪</b>——现有后台新建一个轻量列表，还是先在企业微信的客户备注里过渡；</li><li><b>是否按项目默认分流</b>——比如某个项目一律走聊天版，不用先发卡片；</li><li><b>题库是否与小程序版完全一致</b>——聊天版题目要更短，可能需要一套精简版题面；</li><li><b>CC 的产能上限</b>——一个 CC 一天能问几份，决定这条路线的实际覆盖能力。</li></ol>
+    <div class="foot">
+      <span>医学调研小程序 · 产品需求文档</span>
+      <span>V0.6 · 2026-11-17</span>
+    </div>
+  </article>
+</div>
+</body>
+</html>

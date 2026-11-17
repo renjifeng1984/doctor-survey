@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>路线 B · 话术脚本（红斑狼疮示例）</title>
+<style>
+  :root{--accent:#2a1ba8;--accent-soft:rgba(42,27,168,.07);--ink:#14123f;--ink2:#605f72;--ink3:#8e8fa8;
+    --line:#e6e5eb;--bg:#f4f4fa;--surface:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.75;
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .layout{display:grid;grid-template-columns:236px minmax(0,1fr);gap:28px;max-width:1180px;margin:0 auto;padding:34px 28px 80px}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}.toc{display:none}}
+
+  .toc{position:sticky;top:28px;align-self:start;max-height:calc(100vh - 56px);overflow:auto;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 14px}
+  .toc .tt{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;margin:0 0 10px}
+  .toc a{display:block;padding:6px 8px;border-radius:8px;font-size:13px;color:var(--ink2)}
+  .toc a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none}
+
+  .doc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:36px 42px 44px}
+  @media (max-width:900px){.doc{padding:24px 20px 30px}}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+  .btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:9px;
+    background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:600}
+  .btn:hover{background:rgba(42,27,168,.14);text-decoration:none}
+
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:.01em}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:6px}
+  h3{font-size:15.5px;margin:26px 0 8px;color:#2b2a52}
+  h2,h3{scroll-margin-top:22px}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0;padding-left:22px}
+  li{margin:5px 0}
+  b{color:#0f0d34}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  code{background:#f3f2f9;border-radius:4px;padding:1px 5px;font-size:12.5px;color:#4a3fd0}
+  blockquote{margin:16px 0;padding:12px 16px;background:#f8f8fd;border-left:3px solid #c9c4ee;
+    border-radius:0 10px 10px 0;color:var(--ink2)}
+  blockquote p{margin:0}
+  pre.code{margin:14px 0;padding:14px 16px;background:#f8f8fd;border:1px solid var(--line);border-radius:10px;
+    font-size:12.5px;line-height:1.85;color:#2b2a52;white-space:pre-wrap;font-family:'SFMono-Regular',Consolas,monospace}
+
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:#f6f5fc;font-weight:700;color:#2b2a52;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fbfbfe}
+
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <p class="tt">目录</p>
+    <a href="#1-产品定位">1. 产品定位</a><a href="#2-为什么是移动端">2. 为什么是移动端</a><a href="#3-本期服务对象">3. 本期服务对象</a><a href="#4-入口链路">4. 入口链路</a><a href="#5-信息架构">5. 信息架构</a><a href="#6-核心流程">6. 核心流程</a><a href="#7-关键页面">7. 关键页面</a><a href="#8-状态模型">8. 状态模型</a><a href="#9-功能需求">9. 功能需求</a><a href="#10-异常与边界">10. 异常与边界</a><a href="#11-指标">11. 指标</a><a href="#12-分期">12. 分期</a><a href="#13-后续版本-本期不做">13. 后续版本（本期不做）</a><a href="#14-待确认">14. 待确认</a>
+  </nav>
+  <article class="doc">
+    <h1 id="医学调研小程序-产品需求文档">医学调研小程序 · 产品需求文档</h1>
+<div class="tw"><table><thead><tr><th>版本</th><th>日期</th><th>说明</th></tr></thead><tbody><tr><td>V0.7</td><td>2026-11-17</td><td>题库 8 → 32 题，按六个模块组织；进度条改为模块分段；时长与题量对齐</td></tr><tr><td>V0.6</td><td>2026-11-17</td><td>入口定稿：企微素材库固定卡片 + CC 转发；补卡片配置清单与统计边界</td></tr><tr><td>V0.5</td><td>2026-11-17</td><td>入口改为企微小程序卡片 → 登录 → 调研模块，取消 H5 说明页</td></tr><tr><td>V0.4</td><td>2026-11-17</td><td>界面定稿：首页双入口（横幅＋卡片）、任务页一屏一题、退回补充用折叠；附可点原型</td></tr><tr><td>V0.3</td><td>2026-11-17</td><td>入口收窄为"只服务未绑定医生"，绑定方式定为手机号授权</td></tr><tr><td>V0.2</td><td>2026-11-17</td><td>移动端原生首版，四类入口分层</td></tr><tr><td>V0.1</td><td>2026-11-17</td><td>网页端简化方案，已归档</td></tr></tbody></table></div>
+<blockquote>前提：按新建处理，不继承现有 Web 结构。小程序主体为<b>企业</b>，可用手机号快速验证组件。</blockquote>
+<hr>
+<h2 id="1-产品定位">1. 产品定位</h2>
+<p>一个微信小程序，医生在里面完成：<b>收到调研 → 作答 → 查结果 → 反馈</b>。</p>
+<p>不做招募页、不做签署、不做付款。</p>
+<h2 id="2-为什么是移动端">2. 为什么是移动端</h2>
+<p>医生不在电脑前。原有的摩擦——10 分钟失效链接、要手动刷新看状态、归档文件在微信打不开——本质是把 PC 交互搬到了手机上。</p>
+<p>移动原生带来三件事：免登录、可主动提醒、可断点续做。</p>
+<h2 id="3-本期服务对象">3. 本期服务对象</h2>
+<p><b>CC 在企微里沟通过、被告知"去小程序完成调研"的医生。</b></p>
+<p>完整的前情是两句对话：CC 先说"这次调研麻烦你在小程序里填一下"，然后发一张小程序卡片。医生点开 → 登录 → 填完。</p>
+<p>这说明三件事：</p>
+<ul><li><b>入口是通用卡片</b>：同一个项目一张卡，不区分人；</li><li><b>身份靠登录</b>：沿用小程序已有的登录方式，卡片不携带任何个人参数；</li><li><b>落点是调研模块</b>：不是首页，减少一次"再找一遍"。</li></ul>
+<h2 id="4-入口链路">4. 入口链路</h2>
+<p>一条链，五步：</p>
+<p><b>CC 告知</b> → <b>发小程序卡片</b> → <b>点开</b> → <b>登录</b> → <b>进入调研</b></p>
+<ol><li><b>告知</b>：CC 在既有企微会话里说明这次调研（为什么找他、多久、给什么）。</li><li><b>发卡片</b>：一张指向调研模块的小程序卡片，<code>path</code> 固定为调研模块页。</li><li><b>点开</b>：微信拉起小程序，直接落到调研模块。</li><li><b>登录</b>：未登录走小程序已有的登录页；登录成功<b>回跳到调研模块</b>，不是回首页。</li><li><b>进入调研</b>：只有一条待办就直达任务详情；多条则停在任务列表。</li></ol>
+<h3 id="4-1-卡片">4.1 卡片</h3>
+<p><b>方案：企微素材库配一张固定卡片，CC 一键转发。</b> 不需要开发，外观即为正规的小程序卡片。</p>
+<div class="tw"><table><thead><tr><th>项</th><th>值</th></tr></thead><tbody><tr><td>类型</td><td>企微聊天里的小程序卡片</td></tr><tr><td>指向</td><td>调研模块页（例：<code>pages/survey/list</code>），<b>不是首页</b></td></tr><tr><td>参数</td><td>无个人参数；最多带 <code>source=cc</code> 用于统计</td></tr><tr><td>标题</td><td>本次调研名称（例：系统性红斑狼疮诊疗习惯调研）</td></tr><tr><td>描述</td><td>约 25 分钟 · 完成即获劳务酬谢（一行内写完，超长会被截断）</td></tr><tr><td>缩略图</td><td>品牌图，1:1，从 44px 缩略图到聊天里都能看清</td></tr></tbody></table></div>
+<p>卡片是通用的，所以<b>任何人点开都能进</b>——身份由登录决定，不由卡片决定。CC 不用为每个医生单独生成，发同一张即可。</p>
+<h3 id="4-1-1-上线前要配的四件事-交给企微管理员">4.1.1 上线前要配的四件事（交给企微管理员）</h3>
+<ol><li>企微管理后台 → 应用管理 → 小程序：把「医瞳境元」小程序<b>关联</b>到本企业</li><li>配置素材卡片：标题、描述、缩略图、页面路径（<code>pages/survey/list</code>）</li><li>把这张卡放进 CC 的素材库/快捷回复，或挂到聊天工具栏</li><li>用测试号实发一次，确认点开<b>落在调研模块</b>而不是首页</li></ol>
+<h3 id="4-1-2-这套方案的统计边界">4.1.2 这套方案的统计边界</h3>
+<p>卡片不带个人参数，所以：</p>
+<ul><li><b>能统计</b>：登录后的任务打开率、完成率、用时；</li><li><b>不能统计</b>：谁收到了卡片、谁点开了但没登录。</li></ul>
+<p>要做到"知道谁点了没填"，必须换成后台接口发送（带参数），那是下一期的事。</p>
+<h3 id="4-2-登录">4.2 登录</h3>
+<p>沿用小程序现有登录页，不新造：</p>
+<ul><li><b>快捷登录</b>：微信手机号授权，一步到位（推荐主路径）</li><li><b>验证码登录</b>：手机号 + 短信码</li><li><b>密码登录</b>：已有账号的老医生</li></ul>
+<p>登录成功后必须<b>回跳调研模块</b>——回首页等于让医生再找一次，是把人往外推。</p>
+<h3 id="4-3-登录后落在哪">4.3 登录后落在哪</h3>
+<div class="tw"><table><thead><tr><th>情况</th><th>落点</th></tr></thead><tbody><tr><td>该医生名下只有 1 条待办</td><td>直接进任务详情第 1 题</td></tr><tr><td>多条待办</td><td>任务列表</td></tr><tr><td>没有待办</td><td>列表空态 + 「你的邀请还没到，请联系项目联系人」</td></tr></tbody></table></div>
+<h2 id="5-信息架构">5. 信息架构</h2>
+<p>三个 Tab：任务 / 消息 / 我的（沿用）。</p>
+<p>从卡片进来、且未登录时，登录页<b>不显示 Tab</b>；登录后进入调研模块，Tab 恢复正常。</p>
+<p>任务详情只有一个页面，四种状态换皮肤，不做四个页面。</p>
+<h2 id="6-核心流程">6. 核心流程</h2>
+<p><b>A. 从卡片进入（主路径）</b></p>
+<ol><li>医生在企微里点开卡片</li><li>小程序启动 → 落在调研模块</li><li>未登录 → 登录页 → 快捷登录（手机号授权）</li><li>登录成功 → 回跳调研模块</li><li>只有一条待办 → 直接进第 1 题</li><li>一屏一题作答，自动保存 → 提交</li><li>结果：通过 → 归档可读；退回 → 只改被退回的题</li></ol>
+<p><b>B. 自己打开（次路径）</b></p>
+<ol><li>医生从微信「最近使用」或搜索打开小程序</li><li>有未完成 → 首页弹窗（规则见 7.1）</li><li>无未完成 → 首页正常展示</li></ol>
+<p><b>异常分支</b>：未登录 / 登录过期 / 没有待办 → 见第 10 节的对应处理。</p>
+<h2 id="7-关键页面">7. 关键页面</h2>
+<blockquote>界面已定稿并有可点原型：<a href="prototype/调研模块-定稿原型.html" target="_blank" rel="noopener">调研模块-定稿原型.html</a>。下列描述以原型为准。</blockquote>
+<h3 id="7-1-首页入口-两级">7.1 首页入口（两级）</h3>
+<p>入口只保留两种，不再做常驻悬浮胶囊：</p>
+<div class="tw"><table><thead><tr><th>层级</th><th>形态</th><th>什么时候出现</th><th>打断</th></tr></thead><tbody><tr><td><b>L1 弹窗</b></td><td>居中卡片，一个主行动 + 一个轻退出</td><td>后台判断有未完成调研，<b>且</b>满足下面的频控条件</td><td>强</td></tr><tr><td><b>L2 卡片</b></td><td>会话卡里的「我的调研」入口</td><td>永远在</td><td>无</td></tr></tbody></table></div>
+<p>弹窗承担"让你现在就知道"，卡片承担"随时能找到"。中间那层常驻胶囊已移除——它既不够显眼，又长期占着页面顶部。</p>
+<h3 id="7-1-1-弹窗触发规则">7.1.1 弹窗触发规则</h3>
+<p>后台返回的不是"有没有待办"一个布尔值，而是<b>任务状态 + 上次提示时间</b>，前端据此决定：</p>
+<div class="tw"><table><thead><tr><th>后台状态</th><th>弹窗</th><th>文案</th><th>主按钮</th></tr></thead><tbody><tr><td>新任务（未开始）</td><td>弹</td><td>你有 1 项新的调研</td><td>去看看</td></tr><tr><td>填写中（有草稿）</td><td>弹</td><td>继续上次未完成的调研</td><td>继续填写</td></tr><tr><td>待我补充（被退回）</td><td>弹</td><td>工作人员请你补充 2 题</td><td>去补充</td></tr><tr><td>已提交 / 已完成</td><td>不弹</td><td>—</td><td>—</td></tr></tbody></table></div>
+<p><b>频控（必须实现，否则任务做完之前等于每次打开都弹）：</b></p>
+<ol><li>同一任务、同一自然日，<b>最多弹一次</b>；</li><li>用户点了「稍后再说」→ 当天不再弹，只留 L2 卡片；</li><li>任务状态<b>再次变化</b>（例如从"填写中"变成"待我补充"）→ 重新获得一次弹窗机会；</li><li>医生从通知/卡片<b>直接进入任务详情</b>时，首页不叠加弹窗；</li><li>提交成功后当次会话不再弹。</li></ol>
+<p>后台契约建议字段：<code>taskId</code>、<code>status</code>（new/draft/returned/submitted/done）、<code>lastPromptedAt</code>、<code>pendingCount</code>。前端用 <code>lastPromptedAt</code> 判当天是否已弹过，不依赖本地存储（换设备、清缓存都不能导致重复骚扰）。</p>
+<h3 id="7-2-授权引导">7.2 授权引导</h3>
+<p>只在一处出现，且必须说清"为什么要手机号"：用于匹配你的调研任务，不用于营销。</p>
+<p>医生拒绝授权时，给出"用调研编号查询"的手动通道，不把路堵死。</p>
+<h3 id="7-3-任务列表">7.3 任务列表</h3>
+<p>每张卡固定四行：状态色点、项目名、「还需约 25 分钟，3 月 5 日截止」、唯一主按钮。</p>
+<p>一屏最多 3 张卡；已完成任务折叠到列表底部。</p>
+<h3 id="7-4-任务详情-填写态">7.4 任务详情 · 填写态</h3>
+<ul><li>顶部：项目名 + 状态 + 「已保存 12:03」</li><li>说明：默认折 3 行，可展开</li><li>题目：<b>一屏一题</b>，共 32 题，显示「模块名 · 3/32」，上一题 / 下一题；进度条按六个模块分段，可点跳转</li><li>底部：没答完置灰显示"还剩 5 题"，最后一题变「提交」</li></ul>
+<p>没有保存按钮，停手 1 秒自动落盘。</p>
+<p><b>题量与时长</b>：32 题按六个模块组织（患者画像 5 / 诊断检查 5 / 活动判断 5 / 治疗方案 8 / 并发症 5 / 随访依从 4），完整填完约 25 分钟。小程序里允许分次填，草稿自动保存。</p>
+<h3 id="7-5-需补充态-折叠形态">7.5 需补充态（折叠形态）</h3>
+<p>退回的题量通常只有 1–3 道，此时<b>不用一屏一题</b>，改用可折叠列表：</p>
+<ul><li>顶部横幅说明要补几题；</li><li><b>只展开被退回的题</b>，其余折成"已完成"一行；</li><li>工作人员的原话直接显示在被退回的题下方；</li><li>改完点「重新提交」，不重走全部题目。</li></ul>
+<h3 id="7-6-已归档态">7.6 已归档态</h3>
+<p>按题号竖排全部题目与答案，长按可复制。底部两个按钮：保存为图片、复制全文。</p>
+<p>不提供文件下载。</p>
+<h3 id="7-7-反馈">7.7 反馈</h3>
+<p>底部常驻「遇到问题」。打开是半屏表单，自动带任务号、页面、机型、时间；医生只写一句话，可选 3 张截图。</p>
+<h2 id="8-状态模型">8. 状态模型</h2>
+<div class="tw"><table><thead><tr><th>状态</th><th>医生看到</th><th>能做什么</th></tr></thead><tbody><tr><td>待完成</td><td>待完成（约 25 分钟）</td><td>填写、退出、暂存</td></tr><tr><td>需要你补充</td><td>需要你补充 2 题</td><td>改答案、重新提交</td></tr><tr><td>已提交</td><td>已交给工作人员</td><td>查看、反馈</td></tr><tr><td>已完成</td><td>可查看你的记录</td><td>阅读、保存、复制</td></tr></tbody></table></div>
+<p>界面上不出现"待我接收""填写中""等待审核"——那是运营术语。</p>
+<h2 id="9-功能需求">9. 功能需求</h2>
+<div class="tw"><table><thead><tr><th>#</th><th>功能</th><th>验收标准</th></tr></thead><tbody><tr><td><b>F0</b></td><td><b>登录后直达</b></td><td>点开卡片 → 登录 → 3 秒内落到该任务第 1 题；无待办时给明确空态，不出现白屏</td></tr><tr><td>F0a</td><td>登录回跳</td><td>登录成功回跳调研模块，不回首页</td></tr><tr><td>F1</td><td>免登录回访</td><td>绑定后 30 天内打开直达该任务，0 次输入</td></tr><tr><td>F1a</td><td>首页弹窗</td><td>仅"自己打开"路径生效：有未完成时弹一次，从卡片直达时不弹</td></tr><tr><td>F2</td><td>任务列表</td><td>首屏 ≤ 3 张卡；≤ 2 次点击进入可填写态</td></tr><tr><td>F3</td><td>一屏一题</td><td>不用滚动即可看到题干、输入框、下一题</td></tr><tr><td>F4</td><td>自动保存</td><td>停手 1 秒内落盘；杀进程重进不丢</td></tr><tr><td>F5</td><td>提交回看</td><td>可逐题跳转修改；提交幂等</td></tr><tr><td>F6</td><td>退回补充</td><td>只展开被退回的题；重提 ≤ 2 步</td></tr><tr><td>F7</td><td>归档阅读</td><td>单页可读，长按可复制</td></tr><tr><td>F8</td><td>导出</td><td>生成可保存图片；复制全文成功率高</td></tr><tr><td>F9</td><td>反馈</td><td>必填字段 ≤ 1，自动带上下文</td></tr></tbody></table></div>
+<h3 id="f0-的实现约束">F0 的实现约束</h3>
+<ul><li>卡片 <code>path</code> 指向调研模块，不带个人参数</li><li>未登录时必须先登录，登录后<b>回跳调研模块</b>（<code>redirect</code> 参数带上原始落点）</li><li>登录态沿用小程序现有机制，不做第二套</li><li>只有 1 条待办时跳过列表直达详情；多条时停在列表</li></ul>
+<h3 id="f0a-登录方式的约束">F0a 登录方式的约束</h3>
+<ul><li>快捷登录（手机号授权）必须由医生<b>主动点击</b>触发，不能自动调起</li><li>调用前需完成小程序《用户隐私保护指引》配置并取得同意</li><li>手机号快速验证按次计费，需要预算口径</li><li>同一 openid 重复授权不重复建档</li></ul>
+<h2 id="10-异常与边界">10. 异常与边界</h2>
+<div class="tw"><table><thead><tr><th>场景</th><th>处理</th></tr></thead><tbody><tr><td>点开卡片但未登录</td><td>走登录页，登录后回跳调研模块</td></tr><tr><td>登录后没有待办</td><td>空态「你的邀请还没到，请联系项目联系人」，不显示空白</td></tr><tr><td>医生换微信号登录</td><td>以手机号为准，能看到该手机号名下的任务</td></tr><tr><td>号码不在名单</td><td>进待核实队列，医生可浏览说明，不显示空白</td></tr><tr><td>医生拒绝授权</td><td>提供调研编号手输通道</td></tr><tr><td>一个号码对应多个项目</td><td>全部列出，按截止时间排序</td></tr><tr><td>断网作答</td><td>本地暂存，恢复自动同步，标注"待同步"</td></tr><tr><td>两处同时作答</td><td>以服务端最后写入为准，另一处提示"内容已更新"</td></tr><tr><td>小程序被强杀</td><td>重启回到上次位置</td></tr><tr><td>保存图片失败</td><td>降级为"已复制全文"</td></tr></tbody></table></div>
+<h2 id="11-指标">11. 指标</h2>
+<p>获客漏斗（本期核心）：</p>
+<div class="tw"><table><thead><tr><th>环节</th><th>说明</th></tr></thead><tbody><tr><td>触达送达</td><td>短信/公众号实际到达</td></tr><tr><td>H5 打开率</td><td>点开说明页的比例</td></tr><tr><td>按钮点击率</td><td>点「打开小程序」的比例</td></tr><tr><td><b>手机号授权率</b></td><td>关键断崖，低于 60% 要回看 H5 信任说明</td></tr><tr><td>首题完成率</td><td>进入详情后完成第一题的比例</td></tr></tbody></table></div>
+<p>产品指标：</p>
+<ul><li>打开到提交的中位时长 ↓ 30%</li><li>需人工解释"怎么提交"的反馈量 ↓ 50%</li><li>归档保存成功率 ≥ 99%</li></ul>
+<h2 id="12-分期">12. 分期</h2>
+<div class="tw"><table><thead><tr><th>期</th><th>范围</th></tr></thead><tbody><tr><td>MVP</td><td>H5 说明页、小程序骨架、手机号绑定、首页双入口（横幅＋卡片）、任务列表、一屏一题、自动保存、提交</td></tr><tr><td>P1</td><td>退回补充（折叠形态）、归档阅读、导出</td></tr><tr><td>P2</td><td>消息、反馈、后续版本的回访入口</td></tr></tbody></table></div>
+<h2 id="13-后续版本-本期不做">13. 后续版本（本期不做）</h2>
+<ul><li>公众号菜单直达、订阅消息提醒</li><li>已绑定医生的分享卡片</li><li>工作人员侧移动化（审核优先于发布，再是归档）</li></ul>
+<h2 id="14-待确认">14. 待确认</h2>
+<ol><li>小程序类目与提审材料</li><li>手机号验证的按次预算与量级</li><li>H5 域名备案与 JS-SDK 安全域名配置由谁负责</li></ol>
+    <div class="foot">
+      <span>医学调研小程序 · 产品需求文档</span>
+      <span>V0.6 · 2026-11-17</span>
+    </div>
+  </article>
+</div>
+</body>
+</html>

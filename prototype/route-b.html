@@ -1,0 +1,318 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>路线 B · 企微聊天版调研原型</title>
+<style>
+  :root{
+    --accent:#2a1ba8; --accent-soft:rgba(42,27,168,.08);
+    --ink:#14123f; --ink2:#605f72; --ink3:#8e8fa8;
+    --line:#e6e5eb; --bg:#edeef4; --surface:#fff;
+    --green:#07C160; --ok:#23794a; --warn:#a85500;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:14px;background:var(--bg);padding:26px;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}
+
+  .win{width:1180px;height:740px;background:#fff;border-radius:12px;overflow:hidden;
+    box-shadow:0 30px 70px rgba(20,18,63,.28),0 0 0 1px rgba(20,18,63,.08);display:flex;flex-direction:column;font-size:13px;color:#191919}
+
+  .title{height:38px;display:flex;align-items:center;gap:8px;padding:0 12px;background:#F7F7F7;border-bottom:1px solid #E6E6E6;flex:none}
+  .title .dots{display:flex;gap:6px}
+  .title .dots i{width:11px;height:11px;border-radius:50%;background:#D8D8D8;display:block}
+  .title .nm{font-size:12.5px;color:#6B6B6B}
+
+  .body{flex:1;display:flex;min-height:0}
+  .rail{width:60px;flex:none;background:#EDEDED;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:16px}
+  .rail .av{width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#4B3BD6,#7A6BEA);color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+  .rail .ic{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#6B6B6B}
+  .rail .ic.on{background:var(--accent-soft);color:var(--accent)}
+
+  .list{width:238px;flex:none;background:#F7F7F7;border-right:1px solid #E6E6E6;display:flex;flex-direction:column}
+  .search{margin:10px;height:30px;border-radius:6px;background:#fff;display:flex;align-items:center;padding:0 10px;color:#9A9A9A;font-size:12px}
+  .item{display:flex;gap:10px;padding:10px 12px;align-items:center}
+  .item.on{background:#E4E0F7}
+  .item .av{width:36px;height:36px;border-radius:6px;background:#DDE1FF;color:#3a2fbe;display:flex;align-items:center;
+    justify-content:center;font-size:11px;font-weight:700;flex:none}
+  .item .nm{font-size:13.5px;font-weight:600}
+  .item .sub{margin-top:3px;font-size:11.5px;color:var(--ink3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  .chat{flex:1;display:flex;flex-direction:column;min-width:0;background:#F5F5F5}
+  .chat-head{height:50px;border-bottom:1px solid #E6E6E6;display:flex;align-items:center;gap:8px;padding:0 18px;flex:none}
+  .chat-head .nm{font-size:15px;font-weight:600}
+  .chat-head .meta{font-size:12px;color:var(--ink3)}
+  .tag{font-size:10px;color:var(--green);border:1px solid var(--green);border-radius:3px;padding:1px 4px}
+
+  .msgs{flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+  .row{display:flex;gap:8px;align-items:flex-start}
+  .row.out{justify-content:flex-end}
+  .row .av{width:32px;height:32px;border-radius:5px;flex:none;display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;font-weight:700;color:#fff;background:linear-gradient(135deg,#4B3BD6,#7A6BEA)}
+  .row .av.pat{background:linear-gradient(135deg,#dfe3ff,#c9c2f5);color:#3a2fbe}
+  .bub{max-width:430px;padding:9px 12px;border-radius:8px;font-size:14px;line-height:1.6;white-space:pre-wrap}
+  .bub.out{background:#95EC69;color:#111}
+  .bub.in{background:#fff;color:#191919}
+  .qnum{display:inline-block;font-weight:700;color:var(--accent);margin-right:4px}
+
+  .inputbar{flex:none;border-top:1px solid #E6E6E6;background:#fff;padding:10px 14px 14px}
+  .tools{display:flex;gap:14px;color:#6B6B6B;font-size:15px;margin-bottom:8px}
+  .box{height:64px;border-radius:6px;background:#FAFAFA;border:1px solid #EDEDED}
+  .sendrow{display:flex;justify-content:flex-end;margin-top:8px}
+  .btn{height:32px;padding:0 16px;border-radius:6px;border:0;background:var(--accent);color:#fff;font-size:13px;font-weight:600;
+    cursor:pointer;font-family:inherit}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:var(--accent-soft);color:var(--accent)}
+
+  .side{width:330px;flex:none;border-left:1px solid #E6E6E6;display:flex;flex-direction:column;background:#fff}
+  .side .hd{padding:14px 16px 4px;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:space-between}
+  .side .hd .cnt{font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);border-radius:6px;padding:2px 8px}
+  .side .sb{font-size:11.5px;color:var(--ink3);padding:0 16px 10px}
+  .plist{flex:1;overflow-y:auto;padding:0 12px 12px}
+  .prow{display:flex;gap:9px;padding:9px 8px;border-radius:9px;align-items:flex-start}
+  .prow.cur{background:#f6f5fd}
+  .prow .idx{width:20px;height:20px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;
+    font-size:10.5px;font-weight:700;background:#EDEDF3;color:#8e8fa8}
+  .prow.done .idx{background:var(--ok);color:#fff}
+  .prow.cur .idx{background:var(--accent);color:#fff}
+  .prow .t{font-size:12.5px;line-height:1.45;color:#2b2a52}
+  .prow .a{margin-top:3px;font-size:11.5px;color:var(--ink3);line-height:1.45;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .side .foot{padding:12px 14px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:8px}
+  .side .foot .btn{height:36px;width:100%}
+  .side .note{font-size:11px;color:var(--ink3);line-height:1.5}
+
+  .bar{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#5C5876}
+  .bar .btn{height:32px;background:#fff;color:var(--accent);box-shadow:0 1px 3px rgba(20,18,63,.12)}
+  .bar .step{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+
+<div class="win">
+  <div class="title">
+    <div class="dots"><i></i><i></i><i></i></div>
+    <span class="nm">企业微信</span>
+  </div>
+  <div class="body">
+    <div class="rail">
+      <div class="av">王</div>
+      <div class="ic on">💬</div><div class="ic">👥</div><div class="ic">▦</div><div class="ic">📅</div>
+    </div>
+
+    <div class="list">
+      <div class="search">搜索</div>
+      <div class="item on">
+        <div class="av">李</div>
+        <div style="min-width:0"><div class="nm">李建国 <span class="tag">微信</span></div>
+          <div class="sub" id="lastMsg">这次调研不用装小程序</div></div>
+      </div>
+      <div class="item"><div class="av">周</div><div style="min-width:0"><div class="nm">周敏</div><div class="sub">小程序已提交</div></div></div>
+      <div class="item"><div class="av">陈</div><div style="min-width:0"><div class="nm">陈志远</div><div class="sub">明天下午方便</div></div></div>
+    </div>
+
+    <div class="chat">
+      <div class="chat-head">
+        <span class="nm">李建国</span>
+        <span class="meta">（协和医院·风湿免疫科·主任）</span>
+        <span class="tag">微信</span>
+      </div>
+      <div class="msgs" id="msgs"></div>
+      <div class="inputbar">
+        <div class="tools"><span>☺</span><span>✂</span><span>📎</span><span>▦</span><span style="color:var(--accent);font-weight:600">话术库</span></div>
+        <div class="box"></div>
+        <div class="sendrow"><button class="btn">发送</button></div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="hd">本次调研 <span class="cnt" id="cnt">0/32</span></div>
+      <div class="sb">系统性红斑狼疮诊疗习惯调研 · 路线 B</div>
+      <div class="plist" id="plist"></div>
+      <div class="foot">
+        <button class="btn" id="regBtn" disabled>登记完成</button>
+        <div class="note">只登记完成状态，答案留在聊天记录里</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bar">
+  <button class="btn" id="next">下一步 ▸</button>
+  <button class="btn" id="reset">重来</button>
+  <span class="step" id="step">0 / 18</span>
+  <span>演示脚本：开场 → 32 组问答 → 登记</span>
+</div>
+
+<script>
+const QS = [
+  '您门诊的狼疮患者，以哪类为主？新发、复发，还是长期维持的？',
+  '一年大概看多少例？',
+  '狼疮肾炎、神经精神狼疮这类重症，占多少？',
+  '患者大多从哪来？本院转、外院转，还是自己来？',
+  '随访超过五年的老患者多吗？',
+  '初诊您常规开哪些？ANA、抗 dsDNA、补体、尿常规、24 小时尿蛋白？',
+  '抗 dsDNA 和补体，多久复查一次？',
+  '什么时候会做肾穿刺？你们医院能做吗？',
+  '心脏、肺、神经系统受累，常规筛吗？怎么筛？',
+  '活动度评分用不用？SLEDAI、BILAG，还是都不算？',
+  '判断疾病活动，您主要看哪几个指标？',
+  '轻、中、重度您怎么分？',
+  '复发您怎么定义？一年复发两三次的多吗？',
+  '什么情况算「难治性」？',
+  '有没有用新的标志物，比如干扰素签名、抗 C1q？',
+  '羟氯喹是所有人都用吗？剂量怎么给？',
+  '激素起始一般给多少？按体重还是固定量？',
+  '激素怎么减？减到多少长期维持？',
+  '免疫抑制剂怎么选？霉酚酸酯、环磷酰胺、他克莫司、硫唑嘌呤？',
+  '狼疮肾炎的诱导方案是什么？维持用什么？',
+  '贝利尤单抗、泰它西普这类，什么情况下会考虑？',
+  '上生物制剂之前，会筛哪些？结核、乙肝、免疫球蛋白？',
+  '难治的病例会联合用药吗？一般怎么组合？',
+  '长期吃激素的患者，骨质疏松怎么防？',
+  '感染预防做哪些？疫苗、复方新诺明？',
+  '心血管风险会评估吗？怎么评？',
+  '妊娠怎么管？什么条件下才允许怀孕？',
+  '有没有固定的患者教育材料？谁给？',
+  '稳定期多久随访一次？活动期呢？',
+  '患者自己减激素、停药的情况多吗？最常见的原因是什么？',
+  '失访率大概多少？怎么找回？',
+  '有没有用工具管患者？微信群、随访 App 之类。'
+];
+const AS = [
+  '新发为主，复发也有一些',
+  '一个月二三十例，一年三百左右',
+  '三分之一左右',
+  '外院转来的多',
+  '不多，大部分回当地了',
+  '都做，尿蛋白定量也常规',
+  '稳定期三个月，活动期两周',
+  '有蛋白尿就建议做，本院能做',
+  '有症状才查，常规不筛',
+  '基本不用，凭临床判断',
+  'dsDNA、补体，加上尿蛋白',
+  '看脏器受累程度',
+  '减药后反弹算复发，不算多',
+  '两种以上免疫抑制剂无效',
+  '没听说，我们这儿不用',
+  '都用，200mg 一天两次',
+  '0.5 到 1 mg/kg，按体重',
+  '两周减 5mg，维持 5mg',
+  '重的用 MMF，更重的上 CTX',
+  'CTX 诱导，MMF 维持',
+  '激素减不下来的、反复复发的',
+  '查结核和乙肝，免疫球蛋白也看',
+  'MMF 加他克莫司，多靶点',
+  '常规补钙加维 D',
+  '流感疫苗，SMZ 看情况',
+  '血脂高的才查',
+  '稳定半年以上，停 MMF',
+  '口头讲，没有固定材料',
+  '稳定三个月，活动两周',
+  '多，主要是怕胖、怕副作用',
+  '两成左右，靠电话找',
+  '只有微信群'
+];
+
+const TURNS = [
+  { who:'cc',  t:'张医生，这次调研不用装小程序，我在这儿一条条问您，一共几次，每次十分钟左右，您直接回我就行。答完有劳务酬谢。' },
+  { who:'doc', t:'好，你问吧' },
+];
+QS.forEach((q, i) => {
+  TURNS.push({ who:'cc', t:q, n:i + 1 });
+  TURNS.push({ who:'doc', t:AS[i], qi:i });
+});
+
+let step = 0;
+const msgs = document.getElementById('msgs');
+const plist = document.getElementById('plist');
+const cnt = document.getElementById('cnt');
+const regBtn = document.getElementById('regBtn');
+const stepEl = document.getElementById('step');
+const nextBtn = document.getElementById('next');
+const lastMsg = document.getElementById('lastMsg');
+
+function answered() {
+  let n = 0;
+  for (let i = 0; i < QS.length; i++) {
+    if (TURNS.slice(0, step).some(t => t.qi === i)) n++;
+  }
+  return n;
+}
+
+function renderProgress() {
+  const done = answered();
+  cnt.textContent = done + '/' + QS.length;
+  const answeredSet = new Set(TURNS.slice(0, step).filter(t => t.qi !== undefined).map(t => t.qi));
+  const curQ = TURNS.slice(0, step).filter(t => t.n !== undefined).length; // 已发出的题数
+  plist.innerHTML = QS.map((q, i) => {
+    const isDone = answeredSet.has(i);
+    const isCur = !isDone && i === curQ - 1;
+    const ans = TURNS.slice(0, step).find(t => t.qi === i);
+    return `<div class="prow ${isDone ? 'done' : ''} ${isCur ? 'cur' : ''}">
+      <div class="idx">${isDone ? '✓' : i + 1}</div>
+      <div style="min-width:0">
+        <div class="t">${q}</div>
+        ${isDone ? `<div class="a">${ans.t}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+  regBtn.disabled = done < QS.length;
+  regBtn.textContent = done < QS.length ? `登记完成（还差 ${QS.length - done} 题）` : '登记完成';
+}
+
+function addTurn(t) {
+  const div = document.createElement('div');
+  div.className = 'row ' + (t.who === 'cc' ? 'out' : '');
+  const av = t.who === 'cc' ? '<div class="av">王琳</div>' : '<div class="av pat">李</div>';
+  const num = t.n ? `<span class="qnum">${t.n}/32</span>` : '';
+  const bub = `<div class="bub ${t.who === 'cc' ? 'out' : 'in'}">${num}${t.t}</div>`;
+  div.innerHTML = t.who === 'cc' ? bub + av : av + bub;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  lastMsg.textContent = t.t.slice(0, 18);
+}
+
+function tick() {
+  if (step >= TURNS.length) return;
+  addTurn(TURNS[step]);
+  step++;
+  stepEl.textContent = step + ' / ' + TURNS.length;
+  renderProgress();
+  if (step >= TURNS.length) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = '演示结束';
+  }
+}
+
+function reset() {
+  step = 0;
+  msgs.innerHTML = '';
+  stepEl.textContent = '0 / ' + TURNS.length;
+  nextBtn.disabled = false;
+  nextBtn.textContent = '下一步 ▸';
+  regBtn.disabled = true;
+  regBtn.textContent = '登记完成（还差 ' + QS.length + ' 题）';
+  renderProgress();
+}
+
+nextBtn.onclick = tick;
+document.getElementById('reset').onclick = reset;
+
+regBtn.onclick = () => {
+  regBtn.disabled = true;
+  regBtn.textContent = '已登记 · 2026-11-17';
+  const note = document.querySelector('.side .note');
+  note.textContent = '已登记完成，可发放劳务酬谢；答案不复制、不入库';
+  note.style.color = '#23794a';
+};
+
+reset();
+// 供截图/演示：?n=9 直接推到第 9 步
+const autoN = Number(new URLSearchParams(location.search).get('n') || 0);
+for (let i = 0; i < autoN; i++) tick();
+</script>
+</body>
+</html>
+

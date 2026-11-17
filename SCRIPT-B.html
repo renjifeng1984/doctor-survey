@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>路线 B · 话术脚本（红斑狼疮示例）</title>
+<style>
+  :root{--accent:#2a1ba8;--accent-soft:rgba(42,27,168,.07);--ink:#14123f;--ink2:#605f72;--ink3:#8e8fa8;
+    --line:#e6e5eb;--bg:#f4f4fa;--surface:#fff}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-size:14.5px;line-height:1.75;
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+
+  .layout{display:grid;grid-template-columns:236px minmax(0,1fr);gap:28px;max-width:1180px;margin:0 auto;padding:34px 28px 80px}
+  @media (max-width:900px){.layout{grid-template-columns:1fr}.toc{display:none}}
+
+  .toc{position:sticky;top:28px;align-self:start;max-height:calc(100vh - 56px);overflow:auto;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 14px}
+  .toc .tt{font-size:12px;font-weight:700;color:var(--ink3);letter-spacing:.08em;margin:0 0 10px}
+  .toc a{display:block;padding:6px 8px;border-radius:8px;font-size:13px;color:var(--ink2)}
+  .toc a:hover{background:var(--accent-soft);color:var(--accent);text-decoration:none}
+
+  .doc{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:36px 42px 44px}
+  @media (max-width:900px){.doc{padding:24px 20px 30px}}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:22px}
+  .btn{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 14px;border-radius:9px;
+    background:var(--accent-soft);color:var(--accent);font-size:13px;font-weight:600}
+  .btn:hover{background:rgba(42,27,168,.14);text-decoration:none}
+
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:.01em}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:6px}
+  h3{font-size:15.5px;margin:26px 0 8px;color:#2b2a52}
+  h2,h3{scroll-margin-top:22px}
+  p{margin:10px 0}
+  ul,ol{margin:10px 0;padding-left:22px}
+  li{margin:5px 0}
+  b{color:#0f0d34}
+  hr{border:0;border-top:1px solid var(--line);margin:28px 0}
+  code{background:#f3f2f9;border-radius:4px;padding:1px 5px;font-size:12.5px;color:#4a3fd0}
+  blockquote{margin:16px 0;padding:12px 16px;background:#f8f8fd;border-left:3px solid #c9c4ee;
+    border-radius:0 10px 10px 0;color:var(--ink2)}
+  blockquote p{margin:0}
+  pre.code{margin:14px 0;padding:14px 16px;background:#f8f8fd;border:1px solid var(--line);border-radius:10px;
+    font-size:12.5px;line-height:1.85;color:#2b2a52;white-space:pre-wrap;font-family:'SFMono-Regular',Consolas,monospace}
+
+  .tw{overflow-x:auto;margin:14px 0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px}
+  th,td{border:1px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  th{background:#f6f5fc;font-weight:700;color:#2b2a52;white-space:nowrap}
+  tbody tr:nth-child(even){background:#fbfbfe}
+
+  .foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--line);font-size:12px;color:var(--ink3);
+    display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="layout">
+  <nav class="toc">
+    <p class="tt">目录</p>
+    <a href="#0-先说题量和时长">0. 先说题量和时长</a><a href="#1-开场">1. 开场</a><a href="#2-提问的基本规则">2. 提问的基本规则</a><a href="#3-三十二题">3. 三十二题</a><a href="#4-追问话术">4. 追问话术</a><a href="#5-断点与续聊">5. 断点与续聊</a><a href="#6-完成判定">6. 完成判定</a><a href="#7-话术禁忌">7. 话术禁忌</a><a href="#8-换成别的病怎么改">8. 换成别的病怎么改</a><a href="#9-待确认">9. 待确认</a>
+  </nav>
+  <article class="doc">
+    <h1 id="路线-b-话术脚本-示例-系统性红斑狼疮-32-题">路线 B · 话术脚本（示例：系统性红斑狼疮 · 32 题）</h1>
+<div class="tw"><table><thead><tr><th>版本</th><th>日期</th><th>说明</th></tr></thead><tbody><tr><td>V0.2</td><td>2026-11-17</td><td>题量 8 → 32，按六个模块组织；补时长、分批与断点续聊</td></tr><tr><td>V0.1</td><td>2026-11-17</td><td>首版：以 SLE 为例，把产品腔的问题改成医生之间真会这么问的话</td></tr></tbody></table></div>
+<blockquote>这份脚本是<b>示例 + 模板</b>。换病种时只换第 3 节的题目，其余各节不动。</blockquote>
+<hr>
+<h2 id="0-先说题量和时长">0. 先说题量和时长</h2>
+<p>8 题的量，医生随口就能答完，信息密度太低。真实调研至少 30 题才够看。</p>
+<p>但 32 题带来一个必须先解决的问题：</p>
+<div class="tw"><table><thead><tr><th>题量</th><th>医生回答</th><th>提问</th><th>合计</th><th>能不能一次聊完</th></tr></thead><tbody><tr><td>8 题</td><td>约 3 分钟</td><td>约 2 分钟</td><td><b>5–8 分钟</b></td><td>能</td></tr><tr><td>32 题</td><td>约 12 分钟</td><td>约 8 分钟</td><td><b>20–25 分钟</b></td><td><b>不能</b></td></tr></tbody></table></div>
+<p>经验值：医生在第 12–15 题之后开始敷衍（"差不多""看情况"）。所以：</p>
+<p><b>建议拆成三次，每次 10–11 题：</b></p>
+<div class="tw"><table><thead><tr><th>次</th><th>模块</th><th>题号</th><th>时长</th></tr></thead><tbody><tr><td>第一次</td><td>患者画像 + 诊断检查</td><td>1–10</td><td>8–10 分钟</td></tr><tr><td>第二次</td><td>活动判断 + 治疗方案</td><td>11–23</td><td>10–12 分钟</td></tr><tr><td>第三次</td><td>并发症 + 随访依从</td><td>24–32</td><td>6–8 分钟</td></tr></tbody></table></div>
+<p>同一天可连做两次，第三次另约。<b>不要一次发 32 题</b>——发出去就是让医生填表，不是聊天。</p>
+<h2 id="1-开场">1. 开场</h2>
+<p>分成两次话术：首次开场、续聊开场。</p>
+<p><b>首次</b>（不超过 3 行）：</p>
+<blockquote>王主任您好，我们是做风湿免疫领域调研的。想请您聊聊<b>系统性红斑狼疮</b>的诊疗习惯，题目分三次问，每次十分钟左右，您方便的时候我接着问。完成后有劳务酬谢。</blockquote>
+<p><b>续聊</b>（一句话，不提重复信息）：</p>
+<blockquote>王主任，接着上次的往下问，还有二十来分钟的量，您现在方便吗？</blockquote>
+<p>三个必须有：<b>不用装任何东西</b>、<b>大概多久</b>、<b>有酬谢</b>。</p>
+<h2 id="2-提问的基本规则">2. 提问的基本规则</h2>
+<ol><li>一次只问一题，医生答完再发下一题；</li><li>每题 ≤ 2 行，编号 <code>n/32</code>；</li><li>封闭题给选项（新发/复发/维持），开放题补一句"大概就行"；</li><li>医生答一句就够，<b>不追字数</b>——追字数医生下次就不回了；</li><li>追问最多两次，两次还不出来就记「未答」往下走。</li></ol>
+<h2 id="3-三十二题">3. 三十二题</h2>
+<h3 id="模块-a-患者画像-1-5">模块 A · 患者画像（1–5）</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>问法</th><th>记录要点</th></tr></thead><tbody><tr><td>1</td><td>您门诊的狼疮患者，以哪类为主？新发的、复发的，还是长期维持的？</td><td>主类，可多选，记顺序</td></tr><tr><td>2</td><td>一年大概看多少例？</td><td>粗略量级即可</td></tr><tr><td>3</td><td>其中狼疮肾炎、神经精神狼疮这类重症，大概占多少？</td><td>比例，答不出记「不详」</td></tr><tr><td>4</td><td>患者大多从哪来？本院转、外院转，还是自己来？</td><td>判断他在体系里的位置</td></tr><tr><td>5</td><td>随访超过五年的老患者多吗？</td><td>有/不多/基本没有</td></tr></tbody></table></div>
+<h3 id="模块-b-诊断与检查-6-10">模块 B · 诊断与检查（6–10）</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>问法</th><th>记录要点</th></tr></thead><tbody><tr><td>6</td><td>初诊您常规开哪些？ANA、抗 dsDNA、补体、尿常规、24 小时尿蛋白，是不是都做？</td><td>逐项确认，别让他自己列</td></tr><tr><td>7</td><td>抗 dsDNA 和补体，多久复查一次？</td><td>稳定期与活动期分开问</td></tr><tr><td>8</td><td>什么时候会做肾穿刺？你们医院能做吗？</td><td>指征 + 可及性</td></tr><tr><td>9</td><td>心脏、肺、神经系统受累，您常规筛吗？怎么筛？</td><td>常规/有症状才查</td></tr><tr><td>10</td><td>活动度评分用不用？SLEDAI、BILAG，还是都不算？</td><td>这是真实分歧点</td></tr></tbody></table></div>
+<h3 id="模块-c-活动判断-11-15">模块 C · 活动判断（11–15）</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>问法</th><th>记录要点</th></tr></thead><tbody><tr><td>11</td><td>判断"疾病活动"，您主要看哪几个指标？</td><td>让他报 2–3 个，按顺序</td></tr><tr><td>12</td><td>轻、中、重度您怎么分？</td><td>分界依据</td></tr><tr><td>13</td><td>复发您怎么定义？一年复发两三次的多吗？</td><td>定义 + 频率观感</td></tr><tr><td>14</td><td>什么情况算"难治性"？</td><td>换过几种方案才算</td></tr><tr><td>15</td><td>有没有用新的标志物，比如干扰素签名、抗 C1q？</td><td>用了/没听说/只在大中心有</td></tr></tbody></table></div>
+<h3 id="模块-d-治疗方案-16-23">模块 D · 治疗方案（16–23）</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>问法</th><th>记录要点</th></tr></thead><tbody><tr><td>16</td><td>羟氯喹是所有人都用吗？剂量怎么给？</td><td>是否常规 + 剂量</td></tr><tr><td>17</td><td>激素起始一般给多少？按体重还是固定量？</td><td>具体数字</td></tr><tr><td>18</td><td>激素怎么减？减到多少长期维持？</td><td>节奏 + 目标量</td></tr><tr><td>19</td><td>免疫抑制剂怎么选？霉酚酸酯、环磷酰胺、他克莫司、硫唑嘌呤，分别什么时候用？</td><td>逐个对应场景</td></tr><tr><td>20</td><td>狼疮肾炎的诱导方案是什么？维持用什么？</td><td>诱导/维持分开记</td></tr><tr><td>21</td><td>贝利尤单抗、泰它西普这类，什么情况下会考虑？</td><td>这是本次核心</td></tr><tr><td>22</td><td>上生物制剂之前，会筛哪些？结核、乙肝、免疫球蛋白？</td><td>逐项确认</td></tr><tr><td>23</td><td>难治的病例会联合用药吗？一般怎么组合？</td><td>组合方式</td></tr></tbody></table></div>
+<h3 id="模块-e-并发症-24-28">模块 E · 并发症（24–28）</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>问法</th><th>记录要点</th></tr></thead><tbody><tr><td>24</td><td>长期吃激素的患者，骨质疏松怎么防？</td><td>是否常规补钙/维 D</td></tr><tr><td>25</td><td>感染预防做哪些？疫苗、复方新诺明？</td><td>具体措施</td></tr><tr><td>26</td><td>心血管风险会评估吗？怎么评？</td><td>有/无/看情况</td></tr><tr><td>27</td><td>妊娠怎么管？什么条件下才允许怀孕？</td><td>稳定多久、哪些药要停</td></tr><tr><td>28</td><td>有没有固定的患者教育材料？谁给？</td><td>有/口头讲</td></tr></tbody></table></div>
+<h3 id="模块-f-随访与依从-29-32">模块 F · 随访与依从（29–32）</h3>
+<div class="tw"><table><thead><tr><th>#</th><th>问法</th><th>记录要点</th></tr></thead><tbody><tr><td>29</td><td>稳定期多久随访一次？活动期呢？</td><td>两个频率</td></tr><tr><td>30</td><td>患者自己减激素、停药的情况多吗？最常见的原因是什么？</td><td>后半句才是真答案</td></tr><tr><td>31</td><td>失访率大概多少？怎么找回？</td><td>比例 + 做法</td></tr><tr><td>32</td><td>有没有用工具管患者？微信群、随访 App 之类。</td><td>用什么/不用</td></tr></tbody></table></div>
+<h2 id="4-追问话术">4. 追问话术</h2>
+<div class="tw"><table><thead><tr><th>情况</th><th>医生的话</th><th>CC 怎么接</th></tr></thead><tbody><tr><td>太笼统</td><td>「看情况」「因人而异」</td><td>「一般情况是什么样的？多数人您会怎么处理」</td></tr><tr><td>答非所问</td><td>问方案答了副作用</td><td>「副作用这块我记下了，方案上您一般用哪个组合？」</td></tr><tr><td>用缩写</td><td>「MMF」「HCQ」「CTX」</td><td>不要求解释，回一句确认：「MMF 就是霉酚酸酯对吧」</td></tr><tr><td>反问我们</td><td>「你们是哪家的」</td><td>「XX 医学部委托的，只做诊疗习惯调研，不涉及产品推荐」</td></tr><tr><td>说"这些用药都差不多"</td><td>明显想跳过</td><td>「那您最常用的是哪两个？我就记这两个」</td></tr></tbody></table></div>
+<h2 id="5-断点与续聊">5. 断点与续聊</h2>
+<p>32 题必然中断，所以断点处理是常态，不是异常：</p>
+<div class="tw"><table><thead><tr><th>情况</th><th>处理</th></tr></thead><tbody><tr><td>医生中途说"先这样"</td><td>记下停在第几题，约下次</td></tr><tr><td>超过 24 小时没回</td><td>追一次，不问第二遍</td></tr><tr><td>隔了一周才回</td><td>从断点题接着问，不要重头</td></tr><tr><td>三次都没聊完</td><td>记「部分完成」，按未完成处理</td></tr><tr><td>医生要求换时间</td><td>直接约，不劝</td></tr></tbody></table></div>
+<h2 id="6-完成判定">6. 完成判定</h2>
+<p>按题量算，不按"聊了几次"算：</p>
+<ul><li><b>完成</b>：32 题都有可用回答（允许 3 题以内记「不详」）；</li><li><b>部分完成</b>：缺 4 题及以上，或某模块整块缺失；</li><li>缺的题集中在哪个模块，要在登记时标出来——这决定这份数据能不能用。</li></ul>
+<h2 id="7-话术禁忌">7. 话术禁忌</h2>
+<div class="tw"><table><thead><tr><th>不要</th><th>原因</th></tr></thead><tbody><tr><td>一次发两三个问题</td><td>医生只答最后一个</td></tr><tr><td>一次把 32 题全发出去</td><td>那是问卷，不是聊天</td></tr><tr><td>用「请您评价」「您是否认可」</td><td>问卷腔，医生会开始敷衍</td></tr><tr><td>问患者信息（姓名、住院号）</td><td>合规红线</td></tr><tr><td>在开场提品牌</td><td>被当推销</td></tr><tr><td>追问超过两次</td><td>像审问</td></tr><tr><td>追问"能不能说得再详细点"</td><td>空话，等于没问</td></tr></tbody></table></div>
+<h2 id="8-换成别的病怎么改">8. 换成别的病怎么改</h2>
+<p>第 3 节是唯一要重写的部分，模块结构固定：</p>
+<div class="tw"><table><thead><tr><th>模块</th><th>问什么</th><th>题量</th></tr></thead><tbody><tr><td>A 患者画像</td><td>主要看哪类、多少例、多重</td><td>5</td></tr><tr><td>B 诊断检查</td><td>初诊开什么、多久复查、可及性</td><td>5</td></tr><tr><td>C 活动判断</td><td>怎么算活动、怎么分度、怎么算难治</td><td>5</td></tr><tr><td>D 治疗方案</td><td>一线、进阶、联合、减量</td><td>8</td></tr><tr><td>E 并发症</td><td>长期用药的副作用管理</td><td>5</td></tr><tr><td>F 随访依从</td><td>频率、失访、教育</td><td>4</td></tr></tbody></table></div>
+<p>合计 32 题。比例上 <b>D 段最重</b>——治疗方案才是调研真正想拿的东西。</p>
+<p>换成脊柱疼痛（PSPS/SCS），同样的六段：</p>
+<ul><li>A：看哪类患者、一年多少台、SCS 候选占多少、转诊来源、病程</li><li>B：术前评估（影像/疼痛评分/心理量表）、适应证判断、禁忌症</li><li>C：什么算"保守治疗失败"、什么时候转诊、试穿成功的标准</li><li>D：试穿几天、电极选择、程控谁做、失败后怎么办、并发症处理</li><li>E：感染、电极移位、术后疼痛管理</li><li>F：随访频率、程控依从、失访</li></ul>
+<h2 id="9-待确认">9. 待确认</h2>
+<ol><li>本期做哪个病种——SLE 还是脊柱疼痛（决定整套题库）</li><li>32 题是否统一，还是按项目可配（有些项目只要 15 题）</li><li>分三次的话，CC 的排期怎么管（同一天连做两次 vs 分开约）</li><li>「不详」的容忍上限——现在是 3 题，要不要按模块限制</li></ol>
+    <div class="foot">
+      <span>医学调研小程序 · 产品需求文档</span>
+      <span>V0.6 · 2026-11-17</span>
+    </div>
+  </article>
+</div>
+</body>
+</html>

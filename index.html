@@ -1,0 +1,193 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<!--
+  ┌─ 本页视觉约定（改这里之前先读）──────────────────────────────
+  │ 1. 颜色只表示「属于哪条路线」，不做视觉重点、不给任何区块特殊待遇：
+  │      路线 A 靛蓝 #2a1ba8   ·   .rail-a
+  │      路线 B 灰紫 #6B5B95   ·   .rail-b
+  │ 2. 所有卡片统一：白底 + 18px 圆角 + 4px 顶部色条（inset 阴影实现）。
+  │    不要加渐变底、不要加深色卡；需要强调就用分区编号和内容本身。
+  │ 3. 并列内容用 .grid2（1fr 1fr）：自动等高，按钮靠 margin-top:auto 对齐。
+  │    主次内容用上下堆叠，不要为了"好看"改成并排。
+  │ 4. 加新卡片时套 .card（含路线色就加 .rail-a / .rail-b），
+  │    不要在标签里写内联颜色——内联会盖掉上面的类，之前踩过。
+  │ 5. 所有站外/跨页链接一律 target="_blank"，页内锚点除外。
+  └────────────────────────────────────────────────────────────
+-->
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>医瞳境元 · 医生调研（移动端）方案</title>
+<style>
+  :root{
+    --accent:#2a1ba8;          /* 主色：路线 A */
+    --accent-2:#6B5B95;        /* 副色：路线 B */
+    --accent-2-soft:rgba(107,91,149,.10);
+    --accent-soft:rgba(42,27,168,.07);
+    --ink:#14123f; --ink-2:#5A5872; --ink-3:#8E8FA8;
+    --line:#EAE9F2; --line-2:#F2F1F8;
+    --bg:#F5F5FA; --surface:#fff;
+    --shadow:0 1px 2px rgba(20,18,63,.04),0 8px 24px rgba(20,18,63,.05);
+    --shadow-lift:0 2px 4px rgba(20,18,63,.05),0 14px 34px rgba(20,18,63,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+    -webkit-font-smoothing:antialiased;line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1120px;margin:0 auto;padding:44px 28px 90px}
+
+  /* ---------- 页头 ---------- */
+  header.top{display:flex;align-items:center;gap:13px;margin-bottom:10px}
+  header.top img{width:46px;height:27px}
+  header.top h1{font-size:25px;font-weight:700;margin:0;letter-spacing:-.01em;color:#0F0D34}
+  .sub{margin:0 0 40px;color:var(--ink-2);font-size:14px;max-width:780px}
+
+  /* ---------- 分区标题 ---------- */
+  section{margin-bottom:46px}
+  .sec-h{display:flex;align-items:center;gap:10px;margin:0 0 16px}
+  .sec-h .n{font-size:11.5px;font-weight:800;letter-spacing:.06em;color:var(--accent);
+    background:var(--accent-soft);border-radius:7px;padding:3px 8px;line-height:1.5}
+  .sec-h h2{font-size:18px;font-weight:700;margin:0;letter-spacing:-.01em}
+  .sec-h .note{margin-left:auto;font-size:12.5px;color:var(--ink-3)}
+
+  /* ---------- 卡片 ---------- */
+  .card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    padding:24px 26px;box-shadow:var(--shadow);transition:box-shadow .22s ease,transform .22s ease}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+  .grid2 .card{display:flex;flex-direction:column}
+  .grid2 .card .rowbtns{margin-top:auto;padding-top:18px}
+
+  /* 路线色条 */
+  .card.rail-a{box-shadow:inset 0 4px 0 var(--accent),var(--shadow)}
+  .card.rail-b{box-shadow:inset 0 4px 0 var(--accent-2),var(--shadow)}
+
+  .card h3{margin:0 0 6px;font-size:16.5px;font-weight:700;letter-spacing:-.01em}
+  .ver{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.02em;color:var(--accent);
+    background:var(--accent-soft);border-radius:6px;padding:2px 7px;margin-left:8px;vertical-align:2px}
+  .rail-b .ver{color:var(--accent-2);background:var(--accent-2-soft)}
+
+  ul.pts{margin:14px 0 0;padding-left:17px;color:var(--ink-2);font-size:13.5px;line-height:1.95}
+  ul.pts li{padding-left:2px}
+  ul.pts li::marker{color:#C6C2E4}
+  ul.pts b{color:var(--ink);font-weight:600}
+
+  /* ---------- 按钮 ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;height:40px;padding:0 20px;
+    border-radius:11px;background:var(--accent);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;
+    border:0;font-family:inherit;box-shadow:0 4px 12px rgba(42,27,168,.20);
+    transition:background .18s ease,box-shadow .18s ease,transform .18s ease}
+  .btn:hover{background:#201584;box-shadow:0 6px 18px rgba(42,27,168,.28);transform:translateY(-1px)}
+  .btn.ghost{background:var(--accent-soft);color:var(--accent);box-shadow:none}
+  .btn.ghost:hover{background:rgba(42,27,168,.14);transform:none}
+  .rail-b .btn.ghost{background:var(--accent-2-soft);color:var(--accent-2)}
+  .rail-b .btn.ghost:hover{background:rgba(107,91,149,.18)}
+  .rowbtns{display:flex;flex-wrap:wrap;gap:9px;margin-top:18px}
+
+  .hint{margin:12px 0 0;font-size:12px;color:var(--ink-3);line-height:1.6}
+
+
+  /* ---------- 图 ---------- */
+  figure{margin:0}
+  figure img{width:100%;height:auto;display:block;border-radius:12px;
+    border:1px solid var(--line-2);background:#fff}
+  figcaption{margin-top:10px;font-size:12px;color:var(--ink-3)}
+
+  footer{margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--ink-3);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  @media (max-width:900px){.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <img src="prototype/assets/logo-mark.png" alt="">
+    <h1>医瞳境元 · 医生调研（移动端）方案</h1>
+  </header>
+  <p class="sub">入口：企业微信小程序卡片 → 登录 → 调研模块。本页汇总需求说明、流程图与可点原型。</p>
+
+  <!-- 1 需求说明 -->
+  <section>
+    <div class="sec-h"><span class="n">01</span><h2>需求说明</h2><span class="note">产品需求文档</span></div>
+    <div class="grid2">
+      <div class="card rail-a">
+        <h3>路线 A · 小程序调研<span class="ver">V0.7</span></h3>
+        <ul class="pts">
+          <li><b>入口</b>：CC 发企微小程序卡片，点开即登录，登录后直达调研模块</li>
+          <li><b>答题</b>：一屏一题，可返回、可点进度段跳转，草稿实时保存</li>
+          <li><b>提交</b>：回「我的调研」，卡片变「已提交 · 待审核」</li>
+        </ul>
+        <div class="rowbtns">
+          <a class="btn" href="PRD.html" target="_blank" rel="noopener">查看需求文档</a>
+        </div>
+        <p class="hint">主路径，医生在微信小程序里完成</p>
+      </div>
+
+      <div class="card rail-b">
+        <h3>路线 B · 企微聊天版<span class="ver">V0.3</span></h3>
+        <ul class="pts">
+          <li><b>入口</b>：不装小程序，CC 在企微单聊里逐题提问</li>
+          <li><b>定位</b>：兜底路线，捞回不肯进小程序的医生；与 A 并行</li>
+          <li><b>答案</b>：只存在聊天记录里，后台仅登记完成状态</li>
+        </ul>
+        <div class="rowbtns">
+          <a class="btn" href="PRD-B.html" target="_blank" rel="noopener">查看需求文档</a>
+        </div>
+        <p class="hint">前提：企微不支持外部单聊机器人，只能人工问；侧边栏能挂面板，但读不到聊天内容</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 流程图 -->
+  <section>
+    <div class="sec-h"><span class="n">02</span><h2>流程图</h2><span class="note">点击图片看大图</span></div>
+    <div class="card">
+    <figure>
+      <a href="images/泳道图.png" target="_blank">
+        <img src="images/泳道图.png" alt="医生端泳道图">
+      </a>
+      <figcaption>泳道图：CC / 医生 / 系统 三方分工，从发卡片到完成调研</figcaption>
+    </figure>
+    </div>
+  </section>
+
+  <!-- 3 原型 -->
+  <section>
+    <div class="sec-h"><span class="n">03</span><h2>原型展示</h2><span class="note">可直接点击操作</span></div>
+
+    <div class="card rail-a" style="margin-bottom:16px">
+      <h3>路线 A · 小程序原型（桌面端 + 手机端）</h3>
+      <p class="hint" style="margin-top:8px;font-size:13px">
+        左边是 CC 在桌面版企业微信里选卡发送，右边是手机端同样的动作；医生在微信里收到的就是这张小程序卡片。
+      </p>
+      <div class="rowbtns">
+        <a class="btn" href="prototype/调研模块-定稿原型.html" target="_blank">进入原型</a>
+        <a class="btn ghost" href="prototype/调研模块-定稿原型.html?s=wecom" target="_blank">医生收到的卡片</a>
+      </div>
+    </div>
+
+    <div class="card rail-b">
+      <h3>路线 B · 企微聊天版原型（桌面端）</h3>
+      <p class="hint" style="margin-top:8px;font-size:13px">
+        CC 在企微单聊里逐题提问，右侧实时显示 32 题完成度；答满才能点「登记完成」。点下方「下一步」推进对话。<br>
+        <b style="color:var(--ink)">注意</b>：右侧「自动显示答案」是示意。真实侧边栏读不到聊天内容，实际只能由 CC 手动逐题打勾。
+      </p>
+      <div class="rowbtns">
+        <a class="btn" href="prototype/route-b.html" target="_blank" rel="noopener">进入原型</a>
+        <a class="btn ghost" href="prototype/route-b.html?n=18" target="_blank" rel="noopener">直接看答完的样子</a>
+      </div>
+    </div>
+
+    </section>
+
+  <footer>
+    <span>医瞳境元 · 医生调研移动端方案</span>
+    <span>PRD V0.6 · 原型为演示用静态页面，数据均为示例</span>
+  </footer>
+
+</div>
+</body>
+</html>
+
+

@@ -1,0 +1,930 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>医瞳境元 · 调研模块原型</title>
+<!--
+  原型：调研模块。首页 1:1 复刻 feature-3.0.1 的 pages/home/index.vue：
+  顶栏/门户/头像六边形/会话卡/入口卡/悬浮卡/底栏的尺寸与素材都取自源码（assets 已拷入 ./assets）。
+  新增的是「待办胶囊」与「我的调研」入口。
+-->
+<style>
+:root{
+  --app-page-bg:#f4f4fa; --app-surface:#fff;
+  --app-text-primary:#14123f; --app-text-secondary:#605f72; --app-text-tertiary:#8e8fa8;
+  --app-border-soft:#e6e5eb;
+  --app-accent:#2a1ba8; --app-accent-active:#201584;
+  --app-warning:#a85500; --app-success:#23794a; --app-danger:#d9363e;
+  --chat-ink:#14123f; --chat-body:#2f3248; --chat-accent:#2a1ba8;
+  --chat-brand-from:#056fe3; --chat-brand-to:#0530e3; --chat-headline:#101561;
+  --app-edge:24px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#e9e9f0;
+  font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;padding:24px;color:var(--chat-ink)}
+.phone{width:390px;height:844px;background:var(--app-page-bg);border-radius:44px;overflow:hidden;position:relative;
+  box-shadow:0 24px 60px rgba(20,18,63,.22),0 0 0 10px #1b1b22}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column}
+
+/* ══════════ 首页（.chat-home） ══════════ */
+.home{
+  background-color:var(--app-page-bg);
+  background-image:linear-gradient(180deg,#c9c7f9 0,#d5d8f9 60px,#e0e0fa 120px,#e9e8fa 185px,#e8e9fb 245px,#eef0fc 480px);
+  height:100%;
+}
+/* 顶栏：padding-top 43 为 iPhone12/13 的脚本算值，左内边距归零，横距交给 --app-edge */
+.topbar{display:flex;align-items:center;flex-shrink:0;padding:43px 20px 0 0;min-height:42px;box-sizing:content-box}
+.logo{flex:0 0 auto;width:28px;height:17px;margin-left:var(--app-edge);position:relative;top:2px;display:block}
+.title{margin-left:3px;font-size:21px;font-weight:700;line-height:1;letter-spacing:.01em;color:var(--chat-ink);position:relative;top:2px}
+.capsule{margin-left:auto;display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.8);border-radius:20px;
+  padding:5px 11px;font-size:13px;color:#4a4560}
+.body{flex:1;height:0;overflow-y:auto;scrollbar-width:none;display:flex;flex-direction:column}
+.body::-webkit-scrollbar{display:none}
+
+/* 弹窗（对比方案） */
+.mask{position:absolute;inset:0;background:rgba(20,18,63,.45);z-index:40;display:flex;align-items:center;justify-content:center;padding:0 40px}
+.dialog{width:100%;background:#fff;border-radius:20px;padding:26px 24px 18px;text-align:center;
+  box-shadow:0 20px 48px rgba(20,18,63,.28);position:relative}
+.dialog .ttl{font-size:17px;font-weight:700;color:var(--app-text-primary);line-height:1.4}
+.dialog .desc{margin-top:10px;font-size:14px;line-height:1.6;color:var(--app-text-secondary)}
+.dialog .big{margin-top:16px;font-size:13px;color:var(--app-accent);font-weight:600}
+.dialog .btn{margin-top:20px}
+.dialog .later{margin-top:14px;font-size:14px;color:var(--app-text-tertiary);cursor:pointer}
+.dialog .close{position:absolute;right:12px;top:12px;width:26px;height:26px;border-radius:50%;background:#f2f1f7;
+  color:#8e8fa8;font-size:14px;display:flex;align-items:center;justify-content:center}
+/* 微信胶囊（系统 UI，盖在页面上；真实值：87×32、top 48、右边距 7） */
+.wx-capsule{position:absolute;top:48px;right:7px;width:87px;height:32px;border-radius:16px;z-index:30;
+  display:flex;align-items:center;box-sizing:border-box;
+  background:rgba(255,255,255,.82);border:.5px solid rgba(0,0,0,.08);
+  box-shadow:0 1px 4px rgba(0,0,0,.04);backdrop-filter:blur(12px)}
+.wx-capsule .half{flex:1;height:100%;display:flex;align-items:center;justify-content:center}
+.wx-capsule .divider{width:.5px;height:18px;background:rgba(0,0,0,.12)}
+/* 门户：高度 126，底部对齐，栈下沿压进会话卡 45px */
+.portal{display:flex;align-items:flex-end;justify-content:center;flex-shrink:0;height:148px}
+.stack{position:relative;width:110px;height:110px;margin-bottom:-45px}
+.glow{position:absolute;left:50%;top:50%;width:188px;height:175px;transform:translate(-50%,-50%);pointer-events:none;
+  background-image:radial-gradient(closest-side,rgba(255,255,255,.5),rgba(255,255,255,0))}
+.hex{position:absolute;inset:0;width:110px;height:110px;pointer-events:none}
+.avatar{position:absolute;left:0;top:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;
+  overflow:hidden;background-color:var(--app-surface);
+  clip-path:path('M46.34 11 Q55 6 63.66 11 L93.94 25.5 Q102.6 30.5 102.6 40.5 L102.6 69.5 Q102.6 79.5 93.94 84.5 L63.66 99 Q55 104 46.34 99 L16.06 84.5 Q7.4 79.5 7.4 69.5 L7.4 40.5 Q7.4 30.5 16.06 25.5 Z')}
+.avatar img{width:100%;height:100%;object-fit:cover;transform:scale(1.156) translate(-2.5%,18.1%)}
+
+/* 会话卡 */
+.session{border-radius:26px 26px 0 0;padding:26px 25px 16px;flex:1 0 auto;
+  background-image:linear-gradient(180deg,#e3e6fb 0%,#edf0fc 55%);
+  box-shadow:inset 0 1px 0 #fff,inset 0 2px 0 rgba(255,255,255,.5),0 -3px 14px rgba(255,255,255,.7)}
+.hi{display:block;width:43.4px;height:30px;margin-top:4px;margin-bottom:12px}
+.copy{margin:1px 0 0;font-size:16px;line-height:1.5;color:var(--chat-body)}
+.headline{font-size:21px;font-weight:700;line-height:1.25;color:var(--chat-headline)}\n.paragraph{font-size:16px;line-height:1.5;letter-spacing:0;color:var(--chat-body)}
+
+/* 入口卡 */
+.entry{display:flex;align-items:center;gap:12px;margin-top:12px;padding:14px;border:1px solid rgba(42,27,168,.14);
+  border-radius:16px;background-image:linear-gradient(180deg,rgba(255,255,255,.72) 0%,rgba(255,255,255,.5) 100%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 16px rgba(20,18,63,.07);cursor:pointer;transition:opacity .12s}
+.entry.first{margin-top:22px}
+.entry:active{opacity:.6}
+.entry .ic{width:44px;height:44px;flex:none;display:block}
+.entry .txt{flex:1;min-width:0;display:flex;flex-direction:column}
+.entry .t{font-size:16px;font-weight:600;line-height:22px;color:var(--chat-ink)}
+.entry .d{margin-top:2px;font-size:13px;line-height:1.45;color:var(--chat-body);
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.entry .go{flex:0 0 auto;width:20px;height:20px;display:block}
+
+/* 悬浮卡（.chat-home__fab） */
+.fab{position:absolute;right:16px;bottom:64px;width:84px;padding:9px 6px 18px;border-radius:18px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.22);display:flex;flex-direction:column;align-items:center;
+  background-color:var(--chat-accent);
+  background-image:linear-gradient(120deg,#6a5fe8 0%,#3a2fbe 42%,#2a1ba8 68%,#4f45d8 100%);
+  box-shadow:0 10px 22px rgba(42,27,168,.3),0 0 0 3px rgba(240,212,154,.16)}
+.fab .badge{padding:2px 8px;border-radius:999px;background:#f0d49a;color:var(--chat-accent);font-size:11px;font-weight:700;line-height:15px;letter-spacing:.5px}
+.fab .tt{margin-top:4px;font-size:19px;font-weight:700;line-height:21px;color:#fff;letter-spacing:.5px}
+.fab .ar{position:absolute;right:8px;top:50%;transform:translateY(-50%);font-size:16px;font-weight:700;line-height:14px;color:#f0d49a}
+
+/* 底栏（AppTabBar） */
+.tabbar{flex-shrink:0;display:flex;height:50px;padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:content-box;
+  background:var(--app-surface);border-top:1px solid var(--app-border-soft)}
+.tabbar .item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tabbar .ib{display:flex;align-items:center;justify-content:center;height:25px}
+.tabbar .ib img{display:block}
+.tabbar .item span{margin-top:2px;font-size:10px;line-height:1;color:var(--app-text-secondary)}
+.tabbar .item.on span{color:var(--app-accent)}
+
+.nav .close-btn{margin-left:auto;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.9);
+  display:flex;align-items:center;justify-content:center;font-size:14px;color:var(--app-text-secondary);
+  box-shadow:0 2px 8px rgba(20,18,63,.08);cursor:pointer}
+.from-cc{margin:0 4px 12px;padding:9px 12px;border-radius:10px;background:rgba(42,27,168,.07);
+  font-size:12.5px;color:var(--app-accent);font-weight:600}
+.method-icon {
+    flex: 0 0 auto;
+    width: 18px;
+    height: 18px;
+    /* 三支都是单色字形，颜色统一交给这里（`--accent` = 品牌靛蓝） */
+    background-color: var(--accent);
+}
+
+/* 微信（快捷登录）：官方双气泡字形，与另两支同尺寸、同色 */
+.method-icon--quick {
+    -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+V2VDaGF0PC90aXRsZT48cGF0aCBkPSJNOC42OTEgMi4xODhDMy44OTEgMi4xODggMCA1LjQ3NiAwIDkuNTNjMCAyLjIxMiAxLjE3IDQuMjAzIDMuMDAyIDUuNTVhLjU5LjU5IDAgMCAxIC4yMTMuNjY1bC0uMzkgMS40OGMtLjAxOS4wNy0uMDQ4LjE0MS0uMDQ4LjIxMyAwIC4xNjMuMTMuMjk1LjI5LjI5NWEuMzI2LjMyNiAwIDAgMCAuMTY3LS4wNTRsMS45MDMtMS4xMTRhLjg2NC44NjQgMCAwIDEgLjcxNy0uMDk4IDEwLjE2IDEwLjE2IDAgMCAwIDIuODM3LjQwM2MuMjc2IDAgLjU0My0uMDI3LjgxMS0uMDUtLjg1Ny0yLjU3OC4xNTctNC45NzIgMS45MzItNi40NDYgMS43MDMtMS40MTUgMy44ODItMS45OCA1Ljg1My0xLjgzOC0uNTc2LTMuNTgzLTQuMTk2LTYuMzQ4LTguNTk2LTYuMzQ4ek01Ljc4NSA1Ljk5MWMuNjQyIDAgMS4xNjIuNTI5IDEuMTYyIDEuMThhMS4xNyAxLjE3IDAgMCAxLTEuMTYyIDEuMTc4QTEuMTcgMS4xNyAwIDAgMSA0LjYyMyA3LjE3YzAtLjY1MS41Mi0xLjE4IDEuMTYyLTEuMTh6bTUuODEzIDBjLjY0MiAwIDEuMTYyLjUyOSAxLjE2MiAxLjE4YTEuMTcgMS4xNyAwIDAgMS0xLjE2MiAxLjE3OCAxLjE3IDEuMTcgMCAwIDEtMS4xNjItMS4xNzhjMC0uNjUxLjUyLTEuMTggMS4xNjItMS4xOHptNS4zNCAyLjg2N2MtMS43OTctLjA1Mi0zLjc0Ni41MTItNS4yOCAxLjc4Ni0xLjcyIDEuNDI4LTIuNjg3IDMuNzItMS43OCA2LjIyLjk0MiAyLjQ1MyAzLjY2NiA0LjIyOSA2Ljg4NCA0LjIyOS44MjYgMCAxLjYyMi0uMTIgMi4zNjEtLjMzNmEuNzIyLjcyMiAwIDAgMSAuNTk4LjA4MmwxLjU4NC45MjZhLjI3Mi4yNzIgMCAwIDAgLjE0LjA0N2MuMTM0IDAgLjI0LS4xMTEuMjQtLjI0NyAwLS4wNi0uMDIzLS4xMi0uMDM4LS4xNzdsLS4zMjctMS4yMzNhLjU4Mi41ODIgMCAwIDEtLjAyMy0uMTU2LjQ5LjQ5IDAgMCAxIC4yMDEtLjM5OEMyMy4wMjQgMTguNDggMjQgMTYuODIgMjQgMTQuOThjMC0zLjIxLTIuOTMxLTUuODM3LTYuNjU2LTYuMDg4VjguODljLS4xMzUtLjAxLS4yNy0uMDI3LS40MDctLjAzem0tMi41MyAzLjI3NGMuNTM1IDAgLjk2OS40NC45NjkuOTgyYS45NzYuOTc2IDAgMCAxLS45NjkuOTgzLjk3Ni45NzYgMCAwIDEtLjk2OS0uOTgzYzAtLjU0Mi40MzQtLjk4Mi45Ny0uOTgyem00Ljg0NCAwYy41MzUgMCAuOTY5LjQ0Ljk2OS45ODJhLjk3Ni45NzYgMCAwIDEtLjk2OS45ODMuOTc2Ljk3NiAwIDAgMS0uOTY5LS45ODNjMC0uNTQyLjQzNC0uOTgyLjk2OS0uOTgyeiIvPjwvc3ZnPg==') center / contain no-repeat;
+    mask: url('data:image/svg+xml;base64,PHN2ZyByb2xlPSJpbWciIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+V2VDaGF0PC90aXRsZT48cGF0aCBkPSJNOC42OTEgMi4xODhDMy44OTEgMi4xODggMCA1LjQ3NiAwIDkuNTNjMCAyLjIxMiAxLjE3IDQuMjAzIDMuMDAyIDUuNTVhLjU5LjU5IDAgMCAxIC4yMTMuNjY1bC0uMzkgMS40OGMtLjAxOS4wNy0uMDQ4LjE0MS0uMDQ4LjIxMyAwIC4xNjMuMTMuMjk1LjI5LjI5NWEuMzI2LjMyNiAwIDAgMCAuMTY3LS4wNTRsMS45MDMtMS4xMTRhLjg2NC44NjQgMCAwIDEgLjcxNy0uMDk4IDEwLjE2IDEwLjE2IDAgMCAwIDIuODM3LjQwM2MuMjc2IDAgLjU0My0uMDI3LjgxMS0uMDUtLjg1Ny0yLjU3OC4xNTctNC45NzIgMS45MzItNi40NDYgMS43MDMtMS40MTUgMy44ODItMS45OCA1Ljg1My0xLjgzOC0uNTc2LTMuNTgzLTQuMTk2LTYuMzQ4LTguNTk2LTYuMzQ4ek01Ljc4NSA1Ljk5MWMuNjQyIDAgMS4xNjIuNTI5IDEuMTYyIDEuMThhMS4xNyAxLjE3IDAgMCAxLTEuMTYyIDEuMTc4QTEuMTcgMS4xNyAwIDAgMSA0LjYyMyA3LjE3YzAtLjY1MS41Mi0xLjE4IDEuMTYyLTEuMTh6bTUuODEzIDBjLjY0MiAwIDEuMTYyLjUyOSAxLjE2MiAxLjE4YTEuMTcgMS4xNyAwIDAgMS0xLjE2MiAxLjE3OCAxLjE3IDEuMTcgMCAwIDEtMS4xNjItMS4xNzhjMC0uNjUxLjUyLTEuMTggMS4xNjItMS4xOHptNS4zNCAyLjg2N2MtMS43OTctLjA1Mi0zLjc0Ni41MTItNS4yOCAxLjc4Ni0xLjcyIDEuNDI4LTIuNjg3IDMuNzItMS43OCA2LjIyLjk0MiAyLjQ1MyAzLjY2NiA0LjIyOSA2Ljg4NCA0LjIyOS44MjYgMCAxLjYyMi0uMTIgMi4zNjEtLjMzNmEuNzIyLjcyMiAwIDAgMSAuNTk4LjA4MmwxLjU4NC45MjZhLjI3Mi4yNzIgMCAwIDAgLjE0LjA0N2MuMTM0IDAgLjI0LS4xMTEuMjQtLjI0NyAwLS4wNi0uMDIzLS4xMi0uMDM4LS4xNzdsLS4zMjctMS4yMzNhLjU4Mi41ODIgMCAwIDEtLjAyMy0uMTU2LjQ5LjQ5IDAgMCAxIC4yMDEtLjM5OEMyMy4wMjQgMTguNDggMjQgMTYuODIgMjQgMTQuOThjMC0zLjIxLTIuOTMxLTUuODM3LTYuNjU2LTYuMDg4VjguODljLS4xMzUtLjAxLS4yNy0uMDI3LS40MDctLjAzem0tMi41MyAzLjI3NGMuNTM1IDAgLjk2OS40NC45NjkuOTgyYS45NzYuOTc2IDAgMCAxLS45NjkuOTgzLjk3Ni45NzYgMCAwIDEtLjk2OS0uOTgzYzAtLjU0Mi40MzQtLjk4Mi45Ny0uOTgyem00Ljg0NCAwYy41MzUgMCAuOTY5LjQ0Ljk2OS45ODJhLjk3Ni45NzYgMCAwIDEtLjk2OS45ODMuOTc2Ljk3NiAwIDAgMS0uOTY5LS45ODNjMC0uNTQyLjQzNC0uOTgyLjk2OS0uOTgyeiIvPjwvc3ZnPg==') center / contain no-repeat;
+}
+
+.method-icon--code {
+    -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyLjAwMDAsIDIuNTcwNCkgc2NhbGUoMC4wMjM0MTksIC0wLjAyMzQxOSkgdHJhbnNsYXRlKC03My4wMDAwLCAtNzgzLjAwMDApIj4NCiAgICAgICAgPHBhdGggZD0iTTUwMCA3ODNRMzg0IDc4MyAyODYuMCA3MzIuMFExODggNjgxIDEzMC41IDU5NC41UTczIDUwOCA3MyA0MDZRNzMgMzI1IDEwOS41IDI1My4wUTE0NiAxODEgMjExIDEyOFEyMzAgMTA5IDIyMi4wIDc2LjVRMjE0IDQ0IDE5MyA0TDE5MCAtM1ExODggLTggMTg5LjUgLTEzLjBRMTkxIC0xOCAxOTUuNSAtMjAuNVEyMDAgLTIzIDIwNSAtMjJRMjUwIC0xNSAyODIuMCAtMy4wUTMxNCA5IDM0MyAyNFEzNjQgMzUgMzc1LjAgMzkuMFEzODYgNDMgMzk2IDQwUTQ0OCAyOSA1MDAgMjlRNjE2IDI5IDcxNC4wIDgwLjBRODEyIDEzMSA4NjkuNSAyMTcuNVE5MjcgMzA0IDkyNyA0MDZROTI3IDUwOCA4NjkuNSA1OTQuNVE4MTIgNjgxIDcxNC4wIDczMi4wUTYxNiA3ODMgNTAwIDc4M1pNMjg4IDQ1MFEzMTEgNDUwIDMyNy4wIDQzNC4wUTM0MyA0MTggMzQzIDM5NlEzNDMgMzc0IDMyNy4wIDM1OC4wUTMxMSAzNDIgMjg4IDM0MlEyNjYgMzQyIDI1MC4wIDM1OC4wUTIzNCAzNzQgMjM0IDM5NlEyMzQgNDE5IDI1MC4wIDQzNC41UTI2NiA0NTAgMjg4IDQ1MFpNNTAwIDQ1MFE1MjMgNDUwIDUzOC41IDQzNC41UTU1NCA0MTkgNTU0IDM5NlE1NTQgMzc0IDUzOC41IDM1OC4wUTUyMyAzNDIgNTAwIDM0MlE0NzggMzQyIDQ2Mi4wIDM1OC4wUTQ0NiAzNzQgNDQ2IDM5NlE0NDYgNDE5IDQ2Mi4wIDQzNC41UTQ3OCA0NTAgNTAwIDQ1MFpNNzEyIDQ1MFE3MzUgNDUwIDc1MC41IDQzNC41UTc2NiA0MTkgNzY2IDM5NlE3NjYgMzc0IDc1MC41IDM1OC4wUTczNSAzNDIgNzEyIDM0MlE2OTAgMzQyIDY3NC4wIDM1OC4wUTY1OCAzNzQgNjU4IDM5NlE2NTggNDE5IDY3NC4wIDQzNC41UTY5MCA0NTAgNzEyIDQ1MFoiIGZpbGw9IiMwMDAwMDAiLz4NCiAgICA8L2c+DQo8L3N2Zz4NCg==') center / contain no-repeat;
+    mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgyLjAwMDAsIDIuNTcwNCkgc2NhbGUoMC4wMjM0MTksIC0wLjAyMzQxOSkgdHJhbnNsYXRlKC03My4wMDAwLCAtNzgzLjAwMDApIj4NCiAgICAgICAgPHBhdGggZD0iTTUwMCA3ODNRMzg0IDc4MyAyODYuMCA3MzIuMFExODggNjgxIDEzMC41IDU5NC41UTczIDUwOCA3MyA0MDZRNzMgMzI1IDEwOS41IDI1My4wUTE0NiAxODEgMjExIDEyOFEyMzAgMTA5IDIyMi4wIDc2LjVRMjE0IDQ0IDE5MyA0TDE5MCAtM1ExODggLTggMTg5LjUgLTEzLjBRMTkxIC0xOCAxOTUuNSAtMjAuNVEyMDAgLTIzIDIwNSAtMjJRMjUwIC0xNSAyODIuMCAtMy4wUTMxNCA5IDM0MyAyNFEzNjQgMzUgMzc1LjAgMzkuMFEzODYgNDMgMzk2IDQwUTQ0OCAyOSA1MDAgMjlRNjE2IDI5IDcxNC4wIDgwLjBRODEyIDEzMSA4NjkuNSAyMTcuNVE5MjcgMzA0IDkyNyA0MDZROTI3IDUwOCA4NjkuNSA1OTQuNVE4MTIgNjgxIDcxNC4wIDczMi4wUTYxNiA3ODMgNTAwIDc4M1pNMjg4IDQ1MFEzMTEgNDUwIDMyNy4wIDQzNC4wUTM0MyA0MTggMzQzIDM5NlEzNDMgMzc0IDMyNy4wIDM1OC4wUTMxMSAzNDIgMjg4IDM0MlEyNjYgMzQyIDI1MC4wIDM1OC4wUTIzNCAzNzQgMjM0IDM5NlEyMzQgNDE5IDI1MC4wIDQzNC41UTI2NiA0NTAgMjg4IDQ1MFpNNTAwIDQ1MFE1MjMgNDUwIDUzOC41IDQzNC41UTU1NCA0MTkgNTU0IDM5NlE1NTQgMzc0IDUzOC41IDM1OC4wUTUyMyAzNDIgNTAwIDM0MlE0NzggMzQyIDQ2Mi4wIDM1OC4wUTQ0NiAzNzQgNDQ2IDM5NlE0NDYgNDE5IDQ2Mi4wIDQzNC41UTQ3OCA0NTAgNTAwIDQ1MFpNNzEyIDQ1MFE3MzUgNDUwIDc1MC41IDQzNC41UTc2NiA0MTkgNzY2IDM5NlE3NjYgMzc0IDc1MC41IDM1OC4wUTczNSAzNDIgNzEyIDM0MlE2OTAgMzQyIDY3NC4wIDM1OC4wUTY1OCAzNzQgNjU4IDM5NlE2NTggNDE5IDY3NC4wIDQzNC41UTY5MCA0NTAgNzEyIDQ1MFoiIGZpbGw9IiMwMDAwMDAiLz4NCiAgICA8L2c+DQo8L3N2Zz4NCg==') center / contain no-repeat;
+}
+
+.method-icon--password {
+    -webkit-mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzLjg5OTMsIDIuMDAwMCkgc2NhbGUoMC4wMjI4ODMsIC0wLjAyMjg4MykgdHJhbnNsYXRlKC0xNDYuMDAwMCwgLTgxNy4wMDAwKSI+DQogICAgICAgIDxwYXRoIGQ9Ik02ODkgNTAxVjYyOFE2ODkgNjgwIDY2My41IDcyMy4wUTYzOCA3NjYgNTk1LjAgNzkxLjVRNTUyIDgxNyA1MDAgODE3UTQ0OCA4MTcgNDA0LjUgNzkxLjVRMzYxIDc2NiAzMzUuNSA3MjMuMFEzMTAgNjgwIDMxMCA2MjhWNTAxSDI2MlEyMzAgNTAxIDIwMy41IDQ4NS41UTE3NyA0NzAgMTYxLjUgNDQzLjVRMTQ2IDQxNyAxNDYgMzg1VjU5UTE0NiAyNyAxNjEuNSAwLjVRMTc3IC0yNiAyMDMuNSAtNDEuNVEyMzAgLTU3IDI2MiAtNTdINzM4UTc2OSAtNTcgNzk2LjAgLTQxLjVRODIzIC0yNiA4MzguNSAxLjBRODU0IDI4IDg1NCA1OVYzODVRODU0IDQxNyA4MzguNSA0NDMuNVE4MjMgNDcwIDc5Ni41IDQ4NS41UTc3MCA1MDEgNzM4IDUwMVpNNTAwIDc1NVE1MzQgNzU1IDU2My41IDczOC4wUTU5MyA3MjEgNjEwLjAgNjkxLjVRNjI3IDY2MiA2MjcgNjI4VjUwMUgzNzNWNjI4UTM3MyA2NjIgMzkwLjAgNjkxLjVRNDA3IDcyMSA0MzYuNSA3MzguMFE0NjYgNzU1IDUwMCA3NTVaTTU3NyAyMjRRNTc3IDE5MyA1NTQuNSAxNzAuMFE1MzIgMTQ3IDUwMCAxNDdRNDY5IDE0NyA0NDYuMCAxNzAuMFE0MjMgMTkzIDQyMyAyMjRRNDIzIDI1NiA0NDYuMCAyNzguNVE0NjkgMzAxIDUwMCAzMDFRNTMyIDMwMSA1NTQuNSAyNzguNVE1NzcgMjU2IDU3NyAyMjRaIiBmaWxsPSIjMDAwMDAwIi8+DQogICAgPC9nPg0KPC9zdmc+DQo=') center / contain no-repeat;
+    mask: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4NCiAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzLjg5OTMsIDIuMDAwMCkgc2NhbGUoMC4wMjI4ODMsIC0wLjAyMjg4MykgdHJhbnNsYXRlKC0xNDYuMDAwMCwgLTgxNy4wMDAwKSI+DQogICAgICAgIDxwYXRoIGQ9Ik02ODkgNTAxVjYyOFE2ODkgNjgwIDY2My41IDcyMy4wUTYzOCA3NjYgNTk1LjAgNzkxLjVRNTUyIDgxNyA1MDAgODE3UTQ0OCA4MTcgNDA0LjUgNzkxLjVRMzYxIDc2NiAzMzUuNSA3MjMuMFEzMTAgNjgwIDMxMCA2MjhWNTAxSDI2MlEyMzAgNTAxIDIwMy41IDQ4NS41UTE3NyA0NzAgMTYxLjUgNDQzLjVRMTQ2IDQxNyAxNDYgMzg1VjU5UTE0NiAyNyAxNjEuNSAwLjVRMTc3IC0yNiAyMDMuNSAtNDEuNVEyMzAgLTU3IDI2MiAtNTdINzM4UTc2OSAtNTcgNzk2LjAgLTQxLjVRODIzIC0yNiA4MzguNSAxLjBRODU0IDI4IDg1NCA1OVYzODVRODU0IDQxNyA4MzguNSA0NDMuNVE4MjMgNDcwIDc5Ni41IDQ4NS41UTc3MCA1MDEgNzM4IDUwMVpNNTAwIDc1NVE1MzQgNzU1IDU2My41IDczOC4wUTU5MyA3MjEgNjEwLjAgNjkxLjVRNjI3IDY2MiA2MjcgNjI4VjUwMUgzNzNWNjI4UTM3MyA2NjIgMzkwLjAgNjkxLjVRNDA3IDcyMSA0MzYuNSA3MzguMFE0NjYgNzU1IDUwMCA3NTVaTTU3NyAyMjRRNTc3IDE5MyA1NTQuNSAxNzAuMFE1MzIgMTQ3IDUwMCAxNDdRNDY5IDE0NyA0NDYuMCAxNzAuMFE0MjMgMTkzIDQyMyAyMjRRNDIzIDI1NiA0NDYuMCAyNzguNVE0NjkgMzAxIDUwMCAzMDFRNTMyIDMwMSA1NTQuNSAyNzguNVE1NzcgMjU2IDU3NyAyMjRaIiBmaWxsPSIjMDAwMDAwIi8+DQogICAgPC9nPg0KPC9zdmc+DQo=') center / contain no-repeat;
+}
+
+.appicon{width:42px;height:42px;flex:none;display:block;border-radius:10px;box-shadow:0 1px 3px rgba(20,18,63,.08)}
+.appicon img{width:100%;height:100%;display:block;border-radius:10px}
+.appicon.off{opacity:.45}
+/* 舞台：手机 / 桌面两种外壳 */
+.canvas{position:relative;display:inline-block}#stage{position:relative}
+#stage.is-phone{width:390px;height:844px;border-radius:44px;overflow:hidden;background:var(--app-page-bg);
+  box-shadow:0 24px 60px rgba(20,18,63,.22),0 0 0 10px #1b1b22}
+#stage.is-desktop{width:1180px;height:760px;border-radius:12px;overflow:hidden;background:#fff;
+  box-shadow:0 30px 70px rgba(20,18,63,.28),0 0 0 1px rgba(20,18,63,.08)}
+
+/* 同屏对照：桌面端 + 手机端 */
+#stage.is-both{width:1660px;height:920px;border-radius:12px;background:#EDEEF4;padding:30px 34px;box-sizing:border-box;
+  box-shadow:0 24px 60px rgba(20,18,63,.18)}
+.both{display:flex;gap:34px;align-items:flex-start}
+.pane{display:flex;flex-direction:column}
+.pane .cap{margin-top:14px;font-size:13px;color:#5C5876}
+.pane.phone .cap{margin-top:30px}
+.frame{position:relative;overflow:hidden;background:#fff}
+.pane.desk .frame{width:1180px;height:760px;border-radius:12px;box-shadow:0 14px 40px rgba(20,18,63,.18)}
+.pane.phone .frame{width:390px;height:844px;border-radius:44px;box-shadow:0 0 0 10px #1b1b22,0 14px 40px rgba(20,18,63,.2)}
+.dt{display:flex;flex-direction:column;height:100%;background:#fff;font-size:13px;color:#191919}
+.dt-title{height:38px;display:flex;align-items:center;gap:8px;padding:0 12px;background:#F7F7F7;border-bottom:1px solid #E6E6E6;flex:none}
+.dt-title .dots{display:flex;gap:6px}
+.dt-title .dots i{width:11px;height:11px;border-radius:50%;background:#D8D8D8;display:block}
+.dt-title .nm{font-size:12.5px;color:#6B6B6B}
+.dt-body{flex:1;display:flex;min-height:0}
+.dt-rail{width:60px;flex:none;background:#EDEDED;display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:16px}
+.dt-rail .av{width:32px;height:32px;border-radius:6px;background:linear-gradient(135deg,#4B3BD6,#7A6BEA);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800}
+.dt-rail .ic{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:15px;color:#6B6B6B}
+.dt-rail .ic.on{background:rgba(42,27,168,.1);color:#2a1ba8}
+.dt-list{width:250px;flex:none;background:#F7F7F7;border-right:1px solid #E6E6E6;display:flex;flex-direction:column}
+.dt-search{margin:10px;height:30px;border-radius:6px;background:#fff;display:flex;align-items:center;padding:0 10px;color:#9A9A9A;font-size:12px}
+.dt-item{display:flex;gap:10px;padding:10px 12px;align-items:center;cursor:pointer}
+.dt-item.on{background:#E4E0F7}
+.dt-item .av{width:36px;height:36px;border-radius:6px;background:#DDE1FF;color:#3a2fbe;display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:700;flex:none}
+.dt-item .nm{font-size:13.5px;font-weight:600}
+.dt-item .sub{margin-top:3px;font-size:11.5px;color:#8e8fa8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dt-chat{flex:1;display:flex;flex-direction:column;min-width:0;background:#F5F5F5}
+.dt-chat-head{height:52px;background:#F5F5F5;border-bottom:1px solid #E6E6E6;display:flex;align-items:center;gap:8px;padding:0 18px;flex:none}
+.dt-chat-head .nm{font-size:15px;font-weight:600}
+.dt-chat-head .meta{font-size:12px;color:#8e8fa8}
+.dt-chat-head .tag{font-size:10px;color:#07C160;border:1px solid #07C160;border-radius:3px;padding:1px 4px}
+.dt-msgs{flex:1;overflow-y:auto;padding:16px 18px}
+.dt-input{flex:none;border-top:1px solid #E6E6E6;background:#fff;padding:10px 14px 14px}
+.dt-input .tools{display:flex;gap:14px;color:#6B6B6B;font-size:15px;margin-bottom:8px}
+.dt-input .box{height:76px;border-radius:6px;background:#FAFAFA;border:1px solid #EDEDED}
+.dt-input .send-row{display:flex;justify-content:flex-end;margin-top:8px}
+.dt-side{width:300px;flex:none;border-left:1px solid #E6E6E6;background:#fff;display:flex;flex-direction:column}
+.dt-side .hd{padding:14px 16px 6px;font-size:14px;font-weight:700}
+.dt-side .sb{font-size:11.5px;color:#8e8fa8;padding:0 16px 10px}
+.dt-side .list{padding:0 16px 16px;overflow-y:auto}
+/* ── 登录页：逐条对齐 pages/login/login.vue ── */
+.login-page{--accent:#2a1ba8;--text-primary:#14123f;--text-secondary:#605f72;--border-soft:#e6e5eb;
+  --shell-width:336px;--logo-size:68px;--title-size:26px;--subtitle-size:13px;--button-height:48px;
+  --button-radius:20px;--button-font-size:16px;--control-width:300px;--brand-form-gap:60px;
+  position:relative;display:flex;flex-direction:column;height:100%;background:#fff;overflow:hidden;z-index:0}
+.login-head-bg{position:absolute;left:0;top:0;width:100%;height:260px;object-fit:cover;z-index:-2}
+.login-back{position:absolute;left:16px;top:52px;z-index:20;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.72);box-shadow:0 2px 8px rgba(20,18,63,.08);display:flex;align-items:center;
+  justify-content:center;cursor:pointer}
+.login-back svg{width:18px;height:18px;display:block}
+.login-shell{position:relative;flex:1;min-height:100%;display:flex;flex-direction:column;align-items:center;
+  padding:28px 18px;box-sizing:border-box;z-index:1}
+.login-centerpiece{width:min(100%,var(--shell-width));margin:auto 0;display:flex;flex-direction:column;align-items:center}
+.brand-stage{width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.brand-mark{display:flex;align-items:center;justify-content:center}
+.brand-logo{width:var(--logo-size);height:var(--logo-size);display:block}
+.brand-title{margin-top:16px;font-size:var(--title-size);line-height:1.15;font-weight:700;letter-spacing:.01em;color:var(--text-primary)}
+.brand-subtitle{margin-top:10px;max-width:240px;font-size:var(--subtitle-size);line-height:1.5;font-weight:500;
+  color:var(--text-secondary);text-align:center}
+.action-panel{width:100%;display:flex;flex-direction:column;align-items:center;margin-top:var(--brand-form-gap)}
+.primary-action{width:100%;min-height:var(--button-height);display:flex;align-items:center;justify-content:center;
+  border:0;border-radius:var(--button-radius);background:var(--accent);font-size:var(--button-font-size);
+  font-weight:500;color:#fff;cursor:pointer;font-family:inherit}
+.primary-action:active{background:#201584}
+.protocol-box{width:min(100%,var(--control-width));margin-top:18px;padding:0 2px;box-sizing:border-box}
+.protocol-copy{display:flex;justify-content:center;align-items:center;gap:8px;width:100%;min-height:44px}
+.protocol-check{width:16px;height:16px;flex:0 0 16px;display:flex;align-items:center;justify-content:center}
+.protocol-check-box{display:flex;align-items:center;justify-content:center;width:16px;height:16px;
+  border:1px solid rgba(0,0,0,.25);border-radius:2.5px;background:#fff;box-sizing:border-box}
+.protocol-check-box.on{background:var(--accent);border-color:var(--accent);color:#fff;font-size:10px}
+.protocol-text{display:flex;flex-wrap:wrap;align-items:center;font-size:12px;line-height:18px;font-weight:500;color:var(--text-secondary)}
+.protocol-link{font-size:12px;line-height:18px;font-weight:500;color:var(--accent);white-space:nowrap;cursor:pointer;text-decoration:none}
+.other-login{width:min(100%,var(--control-width));margin-top:24px;box-sizing:border-box}
+.other-login-divider{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.other-login-line{flex:1;height:1px;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(0,0,0,.08),rgba(0,0,0,0))}
+.other-login-label{flex:0 0 auto;font-size:12px;line-height:1;font-weight:500;color:var(--text-secondary)}
+.other-login-actions{display:flex;gap:10px}
+.secondary-action{width:auto;flex:1;min-height:var(--button-height);display:flex;align-items:center;
+  justify-content:center;gap:6px;border:0;border-radius:var(--button-radius);background:rgba(42,27,168,.08);
+  font-size:var(--button-font-size);font-weight:500;color:var(--accent);cursor:pointer;font-family:inherit}
+.secondary-action:active{background:rgba(42,27,168,.16)}
+.method-icon{flex:0 0 auto;width:18px;height:18px;background-color:var(--accent)}
+
+.wc{background:#EDEDED}
+.wc-nav{display:flex;align-items:center;padding:50px 96px 10px 16px;background:#EDEDED;border-bottom:1px solid #DCDCDC}
+.wc-nav .t{flex:1;text-align:center;font-size:16px;font-weight:600;color:#191919}
+.wc-nav .b{width:26px;display:flex;align-items:center}.wc-nav .b svg{width:18px;height:18px;display:block}
+.wc-nav .m{width:26px;text-align:right;font-size:17px;color:#191919}
+.wc-time{margin:14px 0 4px;text-align:center;font-size:11.5px;color:#9A9A9A}
+.wc-body{flex:1;overflow-y:auto;padding-bottom:8px}
+.msg{display:flex;gap:9px;padding:8px 14px}
+.msg .av{width:38px;height:38px;border-radius:5px;flex:none;background:linear-gradient(135deg,#dfe3ff,#c9c2f5);
+  display:flex;align-items:center;justify-content:center;font-size:11px;color:#3a2fbe;font-weight:700}
+.bubble{background:#fff;border-radius:6px;padding:10px 12px;font-size:15px;line-height:1.55;color:#191919;max-width:252px}
+.card-mini{width:248px;flex:none;background:#fff;border-radius:8px;overflow:hidden}
+.card-mini .head{display:flex;gap:10px;padding:12px 12px 10px;align-items:flex-start}
+.card-mini .ic{width:40px;height:40px;border-radius:6px;flex:none;background:linear-gradient(135deg,#4B3BD6,#7A6BEA);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800}
+.card-mini .tt{font-size:14.5px;font-weight:600;color:#191919;line-height:1.35}
+.card-mini .ds{margin-top:4px;font-size:12px;color:#9A9A9A;line-height:1.4;overflow-wrap:anywhere}
+.card-mini .src{border-top:1px solid #EFEFEF;padding:7px 12px;font-size:11px;color:#B2B2B2;display:flex;align-items:center;gap:5px}
+.lnk{color:#576B95;text-decoration:none;word-break:break-all}
+.wc-input{display:flex;align-items:center;gap:10px;padding:8px 12px 22px;background:#F7F7F7;border-top:1px solid #DCDCDC}
+.wc-input .circle{width:28px;height:28px;border-radius:50%;border:1.5px solid #767676;display:flex;align-items:center;
+  justify-content:center;font-size:14px;color:#767676}
+.wc-input .box{flex:1;height:34px;border-radius:5px;background:#fff}
+/* CC 侧（企业微信客户端，员工视角） */
+.cc{background:#F7F7F7}
+.cc-nav{display:flex;align-items:center;gap:8px;padding:50px 96px 10px 16px;background:#F7F7F7;border-bottom:1px solid #E2E2E2}
+.cc-nav .b{width:24px;height:24px;flex:none;display:flex;align-items:center;justify-content:center}.cc-nav .b svg{width:18px;height:18px;display:block}
+.cc-nav .t{flex:1;min-width:0;font-size:16px;font-weight:600;color:#191919;display:flex;align-items:center;
+  overflow:hidden;white-space:nowrap}
+.cc-nav .nm{flex:none}
+.cc-nav .meta{flex:0 1 auto;min-width:0;margin-left:2px;font-size:11.5px;font-weight:400;color:#8e8fa8;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cc-nav .tag{flex:none;font-size:10px;color:#07C160;border:1px solid #07C160;border-radius:3px;padding:1px 4px;margin-left:6px;vertical-align:2px}
+.cc-body{flex:1;overflow-y:auto;padding-bottom:6px}
+.cc-row{display:flex;gap:8px;padding:7px 12px;align-items:flex-start}
+.cc-row.out{justify-content:flex-end}
+.cc-row .av{width:36px;height:36px;border-radius:5px;flex:none;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;background:linear-gradient(135deg,#4B3BD6,#7A6BEA)}
+.cc-row .av.pat{background:linear-gradient(135deg,#dfe3ff,#c9c2f5);color:#3a2fbe}
+.cc-bubble{max-width:250px;padding:9px 12px;border-radius:6px;font-size:15px;line-height:1.55}
+.cc-bubble.out{background:#95EC69;color:#111}
+.cc-bubble.in{background:#fff;color:#191919}
+.cc-card{background:#fff;border-radius:8px;overflow:hidden;width:246px}
+.cc-tools{display:flex;align-items:center;gap:8px;padding:8px 10px 20px;background:#F7F7F7;border-top:1px solid #E2E2E2}
+.cc-tools .circle{width:30px;height:30px;border-radius:50%;border:1.5px solid #767676;display:flex;align-items:center;
+  justify-content:center;font-size:14px;color:#767676;flex:none}
+.cc-tools .box{flex:1;height:34px;border-radius:5px;background:#fff;border:1px solid #E2E2E2}
+.cc-tools .mat{font-size:12px;color:#07C160;font-weight:600;padding:0 4px;white-space:nowrap}
+.sheet-mask{position:absolute;inset:0;background:rgba(0,0,0,.35);z-index:40;display:flex;align-items:flex-end}
+.sheet{width:100%;background:#fff;border-radius:16px 16px 0 0;padding:16px 16px 22px}
+.sheet h3{margin:0 0 4px;font-size:15px;font-weight:700;color:#14123f}
+.sheet p{margin:0 0 14px;font-size:12px;color:#8e8fa8}
+.mat-list{display:flex;flex-direction:column;gap:9px}
+.mat-item{display:flex;gap:10px;padding:12px;border:1px solid #E6E5EB;border-radius:12px;align-items:center}
+.mat-item .ic{width:36px;height:36px;border-radius:6px;flex:none;background:linear-gradient(135deg,#4B3BD6,#7A6BEA);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800}
+.mat-item .mt{font-size:13.5px;font-weight:600;color:#14123f;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mat-item .md{margin-top:3px;font-size:11.5px;color:#8e8fa8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mat-item .send{flex:none;font-size:13px;font-weight:600;color:#2a1ba8;padding:6px 10px;border-radius:8px;background:#f2f0fb}
+.mat-item .send.off{color:#b5b3c4;background:#f5f5f8}
+.mat-item .ic{width:40px;height:40px;border-radius:6px;flex:none;background:linear-gradient(135deg,#4B3BD6,#7A6BEA);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:800}
+/* ══════════ 子页（新增功能，沿用全站 token） ══════════ */
+.sub{background:var(--app-page-bg);min-height:100%}
+.nav{display:flex;align-items:center;gap:10px;padding:50px 96px 10px 18px}
+.nav .back{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.9);display:flex;align-items:center;
+  justify-content:center;font-size:16px;color:var(--app-text-primary);box-shadow:0 2px 8px rgba(20,18,63,.08);cursor:pointer}
+.nav h1{margin:0;font-size:17px;font-weight:600;line-height:26px;color:var(--app-text-primary)}
+.content{flex:1;overflow-y:auto;padding:0 18px 96px;scrollbar-width:none}
+.content::-webkit-scrollbar{display:none}
+.toast{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:12px 14px;border-radius:12px;
+  background:#EAF6EF;color:#1F6B43;font-size:13.5px;font-weight:600}
+.toast b{width:18px;height:18px;border-radius:50%;background:#23794a;color:#fff;font-size:11px;
+  display:flex;align-items:center;justify-content:center;flex:none}
+.tcard.done{background:#F5F6FA;border-color:#E6E5EB}.pagetitle{padding:2px 4px 12px}
+.pagetitle h2{margin:0 0 4px;font-size:20px;font-weight:700;color:var(--app-text-primary)}
+.pagetitle p{margin:0;font-size:13px;color:var(--app-text-secondary)}
+.tcard{background:var(--app-surface);border-radius:16px;padding:16px;margin:10px 0;box-shadow:0 8px 24px rgba(20,18,63,.08);cursor:pointer}
+.tcard .row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--app-text-secondary)}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--app-warning)}
+.dot.g{background:var(--app-success)}
+.tcard h3{margin:8px 0 6px;font-size:16px;font-weight:600;line-height:1.4;color:var(--app-text-primary)}
+.tcard .meta{font-size:12.5px;color:var(--app-text-secondary)}
+.tcard .cta{margin-top:12px;padding-top:12px;border-top:1px solid var(--app-border-soft);color:var(--app-accent);font-weight:600;font-size:13.5px;display:flex}
+.tcard .cta span{margin-left:auto}
+.sect{margin:20px 4px 6px;font-size:13px;font-weight:600;color:var(--app-text-tertiary)}
+.banner{display:flex;align-items:center;gap:12px;margin:0 0 10px;padding:13px 15px;border-radius:16px;color:#fff;
+  background-color:var(--chat-accent);
+  background-image:linear-gradient(120deg,#6a5fe8 0%,#3a2fbe 42%,var(--chat-accent) 68%,#4f45d8 100%);
+  box-shadow:0 10px 22px rgba(42,27,168,.28)}
+.banner .bt{flex:1;min-width:0}
+.banner .bt b{display:block;font-size:14px;line-height:1.4;font-weight:700}
+.banner .bt small{display:block;margin-top:2px;font-size:11.5px;line-height:1.45;opacity:.88}
+.progress .segs{flex:1;display:flex;gap:4px;align-items:center}
+.progress .segs i{flex:1;height:5px;border-radius:3px;background:#E6E5EB;cursor:pointer;transition:background 120ms}
+.progress .segs i.done{background:rgba(42,27,168,.45)}
+.progress .segs i.cur{background:var(--app-accent)}.progress{display:flex;align-items:center;gap:10px;padding:2px 2px 14px;font-size:12px;color:var(--app-text-secondary)}
+.progress .track{flex:1;height:4px;border-radius:2px;background:#e6e5eb;overflow:hidden}
+.progress .track b{display:block;height:100%;background:var(--app-accent);border-radius:2px}
+.qcard{background:var(--app-surface);border-radius:16px;padding:18px;box-shadow:0 8px 24px rgba(20,18,63,.08)}
+.qcard .num{font-size:12px;font-weight:600;color:var(--app-accent);letter-spacing:.4px}
+.qcard h2{margin:8px 0 6px;font-size:17px;line-height:1.5;font-weight:600;color:var(--app-text-primary)}
+.qcard .hint{margin:0 0 14px;font-size:12.5px;line-height:1.6;color:var(--app-text-secondary)}
+textarea{width:100%;min-height:116px;border:1px solid var(--app-border-soft);border-radius:12px;padding:12px;
+  font:inherit;font-size:14px;line-height:1.65;resize:none;color:var(--app-text-primary);background:#fbfbfd}
+textarea:focus{outline:none;border-color:rgba(42,27,168,.4);background:#fff}
+.savehint{margin-top:8px;font-size:11.5px;color:var(--app-text-tertiary);text-align:right}
+.footbar{position:absolute;left:0;right:0;bottom:0;padding:12px 18px calc(14px + env(safe-area-inset-bottom,0px));
+  background:linear-gradient(180deg,rgba(244,244,250,0),var(--app-page-bg) 45%)}
+.btn{display:block;width:100%;height:46px;border:0;border-radius:12px;font-size:16px;font-weight:600;color:#fff;
+  background:var(--app-accent);cursor:pointer}
+.btn:active{background:var(--app-accent-active)}
+.btn.ghost{background:#eceaf6;color:var(--app-accent)}
+.btn[disabled]{background:#e2e1ec;color:var(--app-text-tertiary);cursor:not-allowed}
+.btnrow{display:flex;gap:10px}
+.btnrow .btn{flex:1}
+.qlist{display:flex;flex-direction:column;gap:10px}
+.qrow{background:var(--app-surface);border-radius:14px;padding:14px 16px;box-shadow:0 6px 18px rgba(20,18,63,.06)}
+.qrow summary{cursor:pointer;list-style:none;display:flex;gap:10px;align-items:flex-start;font-size:14.5px;
+  font-weight:600;line-height:1.5;color:var(--app-text-primary)}
+.qrow summary::-webkit-details-marker{display:none}
+.qrow summary:after{content:"⌄";margin-left:auto;color:var(--app-text-tertiary);font-size:15px}
+.qrow[open] summary:after{content:"⌃"}
+.qrow .idx{flex:none;color:var(--app-accent);font-weight:700}
+.qrow textarea{margin-top:12px;min-height:92px}
+.reply{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(168,85,0,.08);color:#8a5200;font-size:12.5px;line-height:1.6}
+.qa{background:var(--app-surface);border-radius:14px;padding:15px;margin:9px 0;box-shadow:0 6px 18px rgba(20,18,63,.06)}
+.qa .k{font-size:12px;color:var(--app-text-secondary);margin-bottom:6px}
+.qa .v{font-size:14px;line-height:1.7;color:var(--app-text-primary)}
+.done{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 34px}
+.done .ok{width:72px;height:72px;border-radius:50%;background:rgba(35,121,74,.1);color:var(--app-success);
+  display:flex;align-items:center;justify-content:center;font-size:32px}
+.done h2{margin:18px 0 8px;font-size:19px;font-weight:600;color:var(--app-text-primary)}
+.done p{margin:0;font-size:13.5px;line-height:1.7;color:var(--app-text-secondary)}
+</style>
+</head>
+<body>
+<div class="canvas"><div id="stage"></div>
+  <div class="wx-capsule">
+    <div class="half"><svg width="20" height="6" viewBox="0 0 20 6"><circle cx="3" cy="3" r="2.1" fill="#000"/><circle cx="10" cy="3" r="2.1" fill="#000"/><circle cx="17" cy="3" r="2.1" fill="#000"/></svg></div>
+    <div class="divider"></div>
+    <div class="half"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.2" fill="none" stroke="#000" stroke-width="1.8"/><circle cx="10" cy="10" r="2.9" fill="#000"/></svg></div>
+  </div>
+</div>
+<script>
+const A = './assets/';
+const icBack = '<svg viewBox="0 0 24 24" fill="none" stroke="#14123f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+const MODS = ['患者画像', '诊断检查', '活动判断', '治疗方案', '并发症', '随访依从'];
+const QS = [
+  {id:'q1', mod:0, t:'您门诊的狼疮患者，以哪类为主？', h:'新发 / 复发 / 长期维持，可多选', ph:'例如：新发为主'},
+  {id:'q2', mod:0, t:'一年大概看多少例？', h:'粗略量级就行', ph:'例如：一个月二三十例'},
+  {id:'q3', mod:0, t:'狼疮肾炎、神经精神狼疮这类重症，占多少？', h:'答不出可以填「不详」', ph:'例如：三分之一'},
+  {id:'q4', mod:0, t:'患者大多从哪来？', h:'本院转 / 外院转 / 自己来', ph:'例如：外院转为主'},
+  {id:'q5', mod:0, t:'随访超过五年的老患者多吗？', h:'有 / 不多 / 基本没有', ph:'例如：不多'},
+  {id:'q6', mod:1, t:'初诊您常规开哪些检查？', h:'ANA、抗 dsDNA、补体、尿常规、24h 尿蛋白', ph:'例如：以上都常规做'},
+  {id:'q7', mod:1, t:'抗 dsDNA 和补体，多久复查一次？', h:'稳定期和活动期可以分开写', ph:'例如：稳定 3 个月，活动 2 周'},
+  {id:'q8', mod:1, t:'什么时候会做肾穿刺？你们医院能做吗？', h:'写清指征与可及性', ph:'例如：有蛋白尿就建议，本院能做'},
+  {id:'q9', mod:1, t:'心脏、肺、神经系统受累，常规筛吗？', h:'常规 / 有症状才查', ph:'例如：有症状才查'},
+  {id:'q10', mod:1, t:'活动度评分用不用？', h:'SLEDAI / BILAG / 都不算', ph:'例如：基本不用，凭临床'},
+  {id:'q11', mod:2, t:'判断疾病活动，主要看哪几个指标？', h:'按重要程度写 2–3 个', ph:'例如：dsDNA、补体、尿蛋白'},
+  {id:'q12', mod:2, t:'轻、中、重度您怎么分？', h:'写分界依据', ph:'例如：看脏器受累'},
+  {id:'q13', mod:2, t:'复发您怎么定义？', h:'再加一句：一年复发两三次的多吗', ph:'例如：减药后反弹，不多'},
+  {id:'q14', mod:2, t:'什么情况算「难治性」？', h:'换过几种方案才算', ph:'例如：两种以上免疫抑制剂无效'},
+  {id:'q15', mod:2, t:'有没有用新的标志物？', h:'干扰素签名、抗 C1q 等', ph:'例如：没听说'},
+  {id:'q16', mod:3, t:'羟氯喹是所有人都用吗？剂量怎么给？', h:'是否常规 + 具体剂量', ph:'例如：都用，200mg bid'},
+  {id:'q17', mod:3, t:'激素起始一般给多少？', h:'按体重还是固定量', ph:'例如：0.5–1 mg/kg'},
+  {id:'q18', mod:3, t:'激素怎么减？减到多少长期维持？', h:'节奏 + 目标量', ph:'例如：两周减 5mg，维持 5mg'},
+  {id:'q19', mod:3, t:'免疫抑制剂怎么选？', h:'霉酚酸酯 / 环磷酰胺 / 他克莫司 / 硫唑嘌呤', ph:'例如：重的用 MMF'},
+  {id:'q20', mod:3, t:'狼疮肾炎的诱导与维持方案？', h:'诱导、维持分开写', ph:'例如：CTX 诱导，MMF 维持'},
+  {id:'q21', mod:3, t:'贝利尤单抗、泰它西普什么情况下会考虑？', h:'这是本次核心问题', ph:'例如：激素减不下来时'},
+  {id:'q22', mod:3, t:'上生物制剂前会筛哪些？', h:'结核、乙肝、免疫球蛋白等', ph:'例如：查结核和乙肝'},
+  {id:'q23', mod:3, t:'难治病例会联合用药吗？怎么组合？', h:'写常用组合', ph:'例如：MMF + 他克莫司'},
+  {id:'q24', mod:4, t:'长期用激素，骨质疏松怎么防？', h:'是否常规补钙 / 维 D', ph:'例如：常规补'},
+  {id:'q25', mod:4, t:'感染预防做哪些？', h:'疫苗、复方新诺明等', ph:'例如：流感疫苗 + SMZ'},
+  {id:'q26', mod:4, t:'心血管风险会评估吗？怎么评？', h:'有 / 无 / 看情况', ph:'例如：血脂高的才查'},
+  {id:'q27', mod:4, t:'妊娠怎么管？什么条件才允许？', h:'稳定多久、哪些药要停', ph:'例如：稳定半年，停 MMF'},
+  {id:'q28', mod:4, t:'有没有固定的患者教育材料？', h:'谁给、给什么', ph:'例如：口头讲，没材料'},
+  {id:'q29', mod:5, t:'稳定期多久随访一次？活动期呢？', h:'两个频率都写', ph:'例如：稳定 3 月，活动 2 周'},
+  {id:'q30', mod:5, t:'患者自己减停激素的情况多吗？', h:'后半句才是重点：原因', ph:'例如：多，怕变胖'},
+  {id:'q31', mod:5, t:'失访率大概多少？怎么找回？', h:'比例 + 做法', ph:'例如：两成，靠电话'},
+  {id:'q32', mod:5, t:'有没有用工具管患者？', h:'微信群、随访 App 之类', ph:'例如：只有微信群'}
+];
+const state = {screen:new URLSearchParams(location.search).get('s')||'both', step:(Number(new URLSearchParams(location.search).get('q'))||0), answers:{}, supplemented:false, submitted:(new URLSearchParams(location.search).get('submitted')==='1'), modal:(new URLSearchParams(location.search).get('modal') !== '0'), ccSent:(new URLSearchParams(location.search).get('sent') === '1'), ccTitle:'系统性红斑狼疮诊疗习惯调研', ccSheet:(new URLSearchParams(location.search).get('sent') !== '1')};
+
+const HEX_PATH = 'M46.34 11 Q55 6 63.66 11 L93.94 25.5 Q102.6 30.5 102.6 40.5 L102.6 69.5 Q102.6 79.5 93.94 84.5 L63.66 99 Q55 104 46.34 99 L16.06 84.5 Q7.4 79.5 7.4 69.5 L7.4 40.5 Q7.4 30.5 16.06 25.5 Z';
+
+function hexRings(){
+  return `<svg class="hex" viewBox="0 0 110 110" aria-hidden="true">
+    <g fill="none" stroke="rgba(42,27,168,.16)" stroke-width="1">
+      <path d="${HEX_PATH}" transform="translate(55,55) scale(1.28) translate(-55,-55)"/>
+    </g>
+    <g fill="none" stroke="rgba(42,27,168,.3)" stroke-width="1.2">
+      <path d="${HEX_PATH}"/>
+    </g>
+  </svg>`;
+}
+
+function tabbar(on){
+  const cls = (k) => (on===k ? ' on' : '');
+  const src = (k, done) => A + 'tab-' + k + (done ? '-on' : '') + '.png';
+  const style = {home:'width:26px;height:24px', chat:'width:34px;height:19px', me:'width:20px;height:23px'};
+  return `<div class="tabbar">
+    <div class="item${cls('home')}" onclick="go('home')"><div class="ib"><img src="${src('home', on==='home')}" style="${style.home}" alt=""></div><span>首页</span></div>
+    <div class="item${cls('chat')}"><div class="ib"><img src="${src('chat', on==='chat')}" style="${style.chat}" alt=""></div><span>AI 助手</span></div>
+    <div class="item${cls('me')}"><div class="ib"><img src="${src('me', on==='me')}" style="${style.me}" alt=""></div><span>我的</span></div>
+  </div>`;
+}
+
+function home(){
+  return `<div class="screen home">
+    <div class="topbar">
+      <img class="logo" src="${A}logo-mark.png" alt="医瞳境元">
+      <span class="title">医瞳境元</span>
+    </div>
+
+    <div class="body">
+      <div class="portal">
+        <div class="stack">
+          <div class="glow"></div>
+          ${hexRings()}
+          <div class="avatar"><img src="${A}avatar.gif" alt=""></div>
+        </div>
+      </div>
+
+      <div class="session">
+        <img class="hi" src="${A}hi.png" alt="Hi">
+        <div class="headline">医考通，帮你把题吃透！</div>
+        <div class="paragraph">从参考答案讲到考点延伸，把类题和出题陷阱逐条拆开，再给你记忆口诀和易错提醒，让你做过的题不再错第二遍~</div>
+
+        <div class="entry first">
+          <img class="ic" src="${A}entry-doctor-exam.png" alt="">
+          <div class="txt"><div class="t">医考通</div><div class="d">拍照搜题，答案解析一次给全</div></div>
+          <img class="go" src="${A}entry-go.png" alt="">
+        </div>
+
+        <div class="entry">
+          <img class="ic" src="${A}entry-interview.png" alt="">
+          <div class="txt"><div class="t">有偿医学访谈</div><div class="d">诚邀参与访谈，完成即领劳务酬谢</div></div>
+          <img class="go" src="${A}entry-go.png" alt="">
+        </div>
+
+        <div class="entry" onclick="go('list')">
+          <img class="ic" src="${A}entry-research-accent.svg" alt="">
+          <div class="txt"><div class="t">我的调研</div><div class="d">1 项待完成 · 1 项待补充</div></div>
+          <img class="go" src="${A}entry-go.png" alt="">
+        </div>
+      </div>
+    </div>
+
+    <div class="fab"><div class="badge">报名中</div><div class="tt">医学</div><div class="tt">访谈</div><div class="ar">»</div></div>
+    ${tabbar('home')}
+    ${state.modal ? `
+    <div class="mask">
+      <div class="dialog">
+        <div class="close" onclick="closeModal()">✕</div>
+        <div class="ttl">你有 1 项调研待完成</div>
+        <div class="desc">系统性红斑狼疮诊疗习惯调研（第 2 轮）<br>预计还需约 25 分钟（可分三次），3 月 5 日截止</div>
+        <div class="big">完成即获劳务酬谢</div>
+        <button class="btn" onclick="openDetail()">继续填写</button>
+        <div class="later" onclick="closeModal()">稍后再说</div>
+      </div>
+    </div>` : ''}
+  </div>`;
+}
+
+function list(){
+  return `<div class="screen sub">
+    <div class="nav"><div class="back" onclick="go('home')">${icBack}</div><h1>我的调研</h1></div>
+    <div class="content">
+      <div class="pagetitle"><h2>进行中的调研</h2><p>完成一轮即可获得劳务酬谢</p></div>
+      ${state.submitted ? `<div class="toast"><b>✓</b>提交成功，等待工作人员审核</div>` : ''}
+      ${state.submitted ? `
+      <div class="tcard done">
+        <div class="row"><span class="dot g"></span>已提交 · 待审核</div>
+        <h3>系统性红斑狼疮诊疗习惯调研（第 2 轮）</h3>
+        <div class="meta">审核通过后发放劳务酬谢 · 如需修改请联系王琳</div>
+      </div>` : `
+      <div class="tcard" onclick="openDetail()">
+        <div class="row"><span class="dot"></span>待完成 · 已保存 12:03</div>
+        <h3>系统性红斑狼疮诊疗习惯调研（第 2 轮）</h3>
+        <div class="meta">还需约 25 分钟 · 3 月 5 日截止</div>
+        <div class="cta">继续填写 <span>›</span></div>
+      </div>`}
+      ${state.supplemented ? `
+      <div class="tcard done">
+        <div class="row"><span class="dot g"></span>已补充 · 待审核</div>
+        <h3>狼疮肾炎管理调研</h3>
+        <div class="meta">审核通过后发放劳务酬谢</div>
+      </div>` : `
+      <div class="tcard" onclick="go('supplement')">
+        <div class="row"><span class="dot"></span>需要你补充 2 题</div>
+        <h3>狼疮肾炎管理调研</h3>
+        <div class="meta">工作人员已回复 · 昨天 16:20</div>
+        <div class="cta">查看并补充 <span>›</span></div>
+      </div>`}
+      <div class="sect">已完成</div>
+      <div class="tcard" onclick="go('archive')">
+        <div class="row"><span class="dot g"></span>已归档 · 2 月 18 日</div>
+        <h3>狼疮随访习惯调研</h3>
+        <div class="meta">可查看并保存你的记录</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function detail(){
+  const i = state.step, q = QS[i], v = state.answers[q.id]||'';
+  return `<div class="screen sub">
+    <div class="nav"><div class="back" onclick="go('list')">${icBack}</div><h1>系统性红斑狼疮诊疗习惯调研</h1></div>
+    <div class="content" style="padding-bottom:110px">
+      <div class="progress"><span>${MODS[q.mod]} · ${i+1}/${QS.length}</span><div class="segs">${MODS.map((mn,mi)=>{
+        const inMod = QS.filter(x=>x.mod===mi);
+        const answered = inMod.filter(x=>(state.answers[x.id]||'').trim()).length;
+        const cls = q.mod===mi ? 'cur' : (answered===inMod.length ? 'done' : '');
+        return `<i class="${cls}" title="${mn}" onclick="gotoQ(${QS.findIndex(x=>x.mod===mi)})"></i>`;
+      }).join('')}</div></div>
+      <div class="qcard">
+        <div class="num">第 ${i+1} 题</div>
+        <h2>${q.t}</h2>
+        <p class="hint">${q.h}</p>
+        <textarea placeholder="${q.ph}" oninput="state.answers['${q.id}']=this.value">${v}</textarea>
+        <div class="savehint">已保存 12:0${(i+3)%10}</div>
+      </div>
+    </div>
+    <div class="footbar">
+      <div class="btnrow">
+        ${i===0 ? '' : `<button class="btn ghost" onclick="prevQ()">上一题</button>`}
+        <button class="btn" onclick="nextQ()">${i===QS.length-1?'提交':'下一题'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function supplement(){
+  const R = {q3:'麻烦具体说明是「参与过手术」还是「仅门诊接诊」，两者不同。',
+             q5:'请给出具体日期，不要写「大概上个月」。'};
+  return `<div class="screen sub">
+    <div class="nav"><div class="back" onclick="go('list')">${icBack}</div><h1>狼疮肾炎管理调研</h1></div>
+    <div class="content" style="padding-bottom:110px">
+      <div class="banner"><div class="bt"><b>工作人员有 2 处请你补充</b><small>其余 6 题已保存，不用重填</small></div></div>
+      <div class="qlist">
+        ${QS.slice(0,6).map((q,i)=>{
+          const open = !!R[q.id];
+          return `<details class="qrow" ${open?'open':''}>
+            <summary><span class="idx">${i+1}</span><span>${q.t}</span></summary>
+            ${open?`<div class="reply">“${R[q.id]}”</div>`:''}
+            <textarea placeholder="${q.ph}">${open?'参与过手术，年均约 12 例':'已保存'}</textarea>
+          </details>`;
+        }).join('')}
+      </div>
+    </div>
+    <div class="footbar"><button class="btn" onclick="state.supplemented=true; go('list')">重新提交</button></div>
+  </div>`;
+}
+
+function archive(){
+  const rows = [
+    ['您门诊的狼疮患者，以哪类为主？','新发为主，复发也有一些'],
+    ['一年大概看多少例？','一个月二三十例'],
+    ['有没有用新的标志物？','没听说，我们这儿不用']
+  ];
+  return `<div class="screen sub">
+    <div class="nav"><div class="back" onclick="go('list')">${icBack}</div><h1>我的归档</h1></div>
+    <div class="content" style="padding-bottom:110px">
+      <div class="pagetitle"><h2>狼疮随访习惯调研</h2><p>已归档 · 2 月 18 日</p></div>
+      ${rows.map(([k,v])=>`<div class="qa"><div class="k">${k}</div><div class="v">${v}</div></div>`).join('')}
+    </div>
+    <div class="footbar">
+      <div class="btnrow">
+        <button class="btn ghost" onclick="alert('原型：已复制全文')">复制全文</button>
+        <button class="btn" onclick="alert('原型：已保存到相册')">保存为图片</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function login(){
+  return `<div class="screen sub login-page">
+    <img class="login-head-bg" src="${A}icon-head-back.png" alt="">
+    <div class="login-back" onclick="go('home')">${icBack}</div>
+    <div class="login-shell">
+      <div class="login-centerpiece">
+        <div class="brand-stage">
+          <div class="brand-mark"><img class="brand-logo" src="${A}icon-gpt-avatar.png" alt=""></div>
+          <div class="brand-title">医瞳境元</div>
+          <div class="brand-subtitle">让医学更专业，让生命更美好</div>
+        </div>
+        <div class="action-panel">
+          <button class="primary-action" onclick="go('deep')">快捷登录</button>
+          <div class="protocol-box">
+            <div class="protocol-copy">
+              <span class="protocol-check"><span class="protocol-check-box on">✓</span></span>
+              <span class="protocol-text">登录即代表你同意<span class="protocol-link">《服务协议》</span>和<span class="protocol-link">《隐私政策》</span></span>
+            </div>
+          </div>
+          <div class="other-login">
+            <div class="other-login-divider">
+              <span class="other-login-line"></span>
+              <span class="other-login-label">其他登录方式</span>
+              <span class="other-login-line"></span>
+            </div>
+            <div class="other-login-actions">
+              <button class="secondary-action"><span class="method-icon method-icon--code"></span>验证码登录</button>
+              <button class="secondary-action"><span class="method-icon method-icon--password"></span>密码登录</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function noTask(){
+  return `<div class="screen sub">
+    <div class="nav"><div class="back" onclick="go('home')">${icBack}</div><h1>我的调研</h1></div>
+    <div class="done">
+      <div class="ok" style="background:rgba(42,27,168,.08);color:var(--app-accent)">…</div>
+      <h2>你的邀请还没到</h2>
+      <p>如果项目联系人已经通知过你，<br>请让他在企业微信里再发一次卡片。</p>
+      <button class="btn ghost" style="margin-top:26px;width:180px" onclick="go('home')">先回首页</button>
+    </div>
+  </div>`;
+}
+function wecom(){
+  return `<div class="screen sub wc">
+    <div class="wc-nav"><div class="b">${icBack}</div><div class="t">王琳@芯联达</div></div>
+    <div class="wc-body">
+      <div class="wc-time">今天 14:23</div>
+      <div class="msg"><div class="av">王琳</div>
+        <div class="bubble">李医生您好，我是芯联达的王琳。这次想请您聊聊系统性红斑狼疮（SLE）的诊疗习惯，线上语音，大约 30 分钟，完成后有劳务酬谢。</div>
+      </div>
+      <div class="msg"><div class="av">王琳</div>
+        <div class="bubble">麻烦您点下面这张卡片，在小程序里把调研填一下，大概 25 分钟，可以分几次做。</div>
+      </div>
+      <div class="msg"><div class="av">王琳</div>
+        <div class="card-mini" onclick="go('login')">
+          <div class="head">
+            <div class="appicon"><img src="${A}app-icon.png" alt=""></div>
+            <div style="flex:1;min-width:0">
+              <div class="tt">系统性红斑狼疮诊疗习惯调研</div>
+              <div class="ds">约 25 分钟 · 完成即获劳务酬谢</div>
+            </div>
+          </div>
+          <div class="src">▦ 小程序</div>
+        </div>
+      </div>
+    </div>
+    <div class="wc-input">
+      <div class="circle">◉</div><div class="box"></div><div class="circle">☺</div><div class="circle">＋</div>
+    </div>
+  </div>`;
+}
+
+function wecomLink(){
+  return `<div class="screen sub wc">
+    <div class="wc-nav"><div class="b">${icBack}</div><div class="t">王琳@芯联达</div></div>
+    <div class="wc-body">
+      <div class="wc-time">今天 14:23</div>
+      <div class="msg"><div class="av">王琳</div>
+        <div class="bubble">李医生您好，我是芯联达的王琳。这次想请您聊聊系统性红斑狼疮（SLE）的诊疗习惯，线上语音，大约 30 分钟，完成后有劳务酬谢。</div>
+      </div>
+      <div class="msg"><div class="av">王琳</div>
+        <div class="bubble">麻烦您点下面这个链接，在小程序里把调研填一下，大概 25 分钟，可以分几次做。<br>
+        <a class="lnk">https://muse.doctortoai.com/s/8f3a2c1</a></div>
+      </div>
+    </div>
+    <div class="wc-input">
+      <div class="circle">◉</div><div class="box"></div><div class="circle">☺</div><div class="circle">＋</div>
+    </div>
+  </div>`;
+}
+
+function cc(){
+  const cardTitle = state.ccTitle;
+  const matRows = [
+    ['26CR440-狼疮诊疗习惯-第2轮', '约 25 分钟 · 完成即获劳务酬谢', '系统性红斑狼疮诊疗习惯调研', true],
+    ['26CR440-狼疮肾炎管理-第1轮', '约 10 分钟 · 完成即获劳务酬谢', '狼疮肾炎管理调研', true],
+    ['26CR440-狼疮随访习惯-已结束', '项目已归档，请勿发送', '', false]
+  ];
+  return `<div class="screen sub cc">
+    <div class="cc-nav"><div class="b">${icBack}</div>
+      <div class="t"><span class="nm">李建国</span><span class="meta">（协和医院·风湿免疫科·主任）</span><span class="tag">微信</span></div>
+      </div>
+    <div class="cc-body">
+      <div class="wc-time">今天 14:23</div>
+      <div class="cc-row out"><div class="cc-bubble out">李医生您好，我是芯联达的王琳。这次想请您聊聊系统性红斑狼疮（SLE）的诊疗习惯，线上语音，大约 30 分钟，完成后有劳务酬谢。</div><div class="av">王琳</div></div>
+      <div class="cc-row out"><div class="cc-bubble out">麻烦您点下面这张卡片，在小程序里把调研填一下，大概 25 分钟，可以分几次做。</div><div class="av">王琳</div></div>
+      ${state.ccSent ? `<div class="cc-row out">
+        <div class="cc-card" onclick="go('login')">
+          <div style="display:flex;gap:10px;padding:12px">
+            <div class="appicon"><img src="${A}app-icon.png" alt=""></div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:14.5px;font-weight:600;color:#191919;line-height:1.35">${cardTitle}</div>
+              <div style="margin-top:4px;font-size:12px;color:#9A9A9A;line-height:1.4">约 25 分钟 · 完成即获劳务酬谢</div>
+            </div>
+          </div>
+          <div style="border-top:1px solid #EFEFEF;padding:7px 12px;font-size:11px;color:#B2B2B2">▦ 小程序</div>
+        </div><div class="av">王琳</div></div>` : ''}
+      ${state.ccSent ? `<div class="cc-row"><div class="av pat">李</div><div class="cc-bubble in">好的，我看看</div></div>` : ''}
+    </div>
+    <div class="cc-tools">
+      <div class="circle">◉</div><div class="box"></div><div class="circle">☺</div>
+      <div class="mat" onclick="openSheet()">素材库</div>
+    </div>
+    ${state.ccSheet ? `<div class="sheet-mask" onclick="state.ccSheet=false;render()">
+      <div class="sheet" onclick="event.stopPropagation()">
+        <h3>素材库</h3><p>按项目分的邀请卡片，选一张发给李建国</p>
+        <div class="mat-list">
+          ${matRows.map(([code, desc, title, on]) => `
+            <div class="mat-item" style="${on?'':'opacity:.55'}">
+              <div class="appicon"><img src="${A}app-icon.png" alt=""></div>
+              <div style="flex:1;min-width:0">
+                <div class="mt">${code}</div>
+                <div class="md">${desc}</div>
+              </div>
+              <div class="send ${on?'':'off'}" ${on?`onclick="sendCard('${title}')"`:''}>${on?'发送':'已下架'}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>` : ''}
+  </div>`;
+}
+
+function deep(){
+  const base = list();
+  const overlay = `
+    <div class="mask">
+      <div class="dialog">
+        <div class="close" onclick="go('list')">✕</div>
+        <div class="ttl">系统性红斑狼疮诊疗习惯调研</div>
+        <div class="desc">王琳 邀请你参加 · 约 25 分钟<br>完成后可获得劳务酬谢</div>
+        <button class="btn" style="margin-top:20px" onclick="openDetail()">开始填写</button>
+        <div class="later" onclick="go('list')">看看其他调研</div>
+      </div>
+    </div>`;
+  return base.replace(/<\/div>\s*$/, '') + overlay + '</div>';
+}
+
+function ccDesktop(){
+  const rows = [
+    ['26CR440-狼疮诊疗习惯-第2轮','约 25 分钟 · 完成即获劳务酬谢','系统性红斑狼疮诊疗习惯调研',true],
+    ['26CR440-狼疮肾炎管理-第1轮','约 10 分钟 · 完成即获劳务酬谢','狼疮肾炎管理调研',true],
+    ['26CR440-狼疮随访习惯-已结束','项目已归档，请勿发送','',false]
+  ];
+  return `<div class="dt">
+    <div class="dt-title">
+      <div class="dots"><i></i><i></i><i></i></div>
+      <span class="nm">企业微信</span>
+    </div>
+    <div class="dt-body">
+      <div class="dt-rail">
+        <div class="av">王</div>
+        <div class="ic on">💬</div>
+        <div class="ic">👥</div>
+        <div class="ic">▦</div>
+        <div class="ic">📅</div>
+      </div>
+      <div class="dt-list">
+        <div class="dt-search">搜索</div>
+        <div class="dt-item on">
+          <div class="av">李</div>
+          <div style="min-width:0"><div class="nm">李建国 <span class="tag" style="font-size:9px;color:#07C160;border:1px solid #07C160;border-radius:3px;padding:0 3px">微信</span></div>
+            <div class="sub">好的，我看看</div></div>
+        </div>
+        <div class="dt-item"><div class="av">周</div><div style="min-width:0"><div class="nm">周敏</div><div class="sub">明天下午方便</div></div></div>
+        <div class="dt-item"><div class="av">陈</div><div style="min-width:0"><div class="nm">陈志远</div><div class="sub">调研已提交</div></div></div>
+      </div>
+      <div class="dt-chat">
+        <div class="dt-chat-head">
+          <span class="nm">李建国</span>
+          <span class="meta">（协和医院·风湿免疫科·主任）</span>
+          <span class="tag">微信</span>
+        </div>
+        <div class="dt-msgs">
+          <div class="cc-row out"><div class="cc-bubble out">李医生您好，我是芯联达的王琳。这次想请您聊聊系统性红斑狼疮（SLE）的诊疗习惯，线上语音，大约 30 分钟，完成后有劳务酬谢。</div><div class="av">王琳</div></div>
+          <div class="cc-row out"><div class="cc-bubble out">麻烦您点下面这张卡片，在小程序里把调研填一下，大概 25 分钟，可以分几次做。</div><div class="av">王琳</div></div>
+          <div class="cc-row out">
+            <div class="cc-card" onclick="go('login')">
+              <div style="display:flex;gap:10px;padding:12px">
+                <div class="appicon"><img src="${A}app-icon.png" alt=""></div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:14.5px;font-weight:600;color:#191919;line-height:1.35">系统性红斑狼疮诊疗习惯调研</div>
+                  <div style="margin-top:4px;font-size:12px;color:#9A9A9A">约 25 分钟 · 完成即获劳务酬谢</div>
+                </div>
+              </div>
+              <div style="border-top:1px solid #EFEFEF;padding:7px 12px;font-size:11px;color:#B2B2B2">▦ 小程序</div>
+            </div><div class="av">王琳</div>
+          </div>
+          <div class="cc-row"><div class="av pat">李</div><div class="cc-bubble in">好的，我看看</div></div>
+        </div>
+        <div class="dt-input">
+          <div class="tools"><span>☺</span><span>✂</span><span>📎</span><span>▦</span><span style="color:#2a1ba8;font-weight:600">素材库</span></div>
+          <div class="box"></div>
+          <div class="send-row"><button class="btn" style="width:88px;height:32px;font-size:13.5px;border-radius:6px">发送</button></div>
+        </div>
+      </div>
+      <div class="dt-side">
+        <div class="hd">素材库</div>
+        <div class="sb">按项目分的邀请卡片，选一张发给李建国</div>
+        <div class="list">
+          ${rows.map(([code,desc,title,on])=>`
+            <div class="mat-item" style="margin-bottom:9px;${on?'':'opacity:.55'}">
+              <div class="appicon" style="width:36px;height:36px;border-radius:8px"><img src="${A}app-icon.png" alt="" style="width:100%;height:100%"></div>
+              <div style="flex:1;min-width:0">
+                <div class="mt" style="font-size:12.5px">${code}</div>
+                <div class="md" style="font-size:11px">${desc}</div>
+              </div>
+              <div class="send ${on?'':'off'}" ${on?`onclick="sendCardD('${title}')"`:''}>${on?'发送':'已下架'}</div>
+            </div>`).join('')}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function both(){
+  return `<div class="both">
+    <div class="pane desk">
+      <div class="frame">${ccDesktop()}</div>
+    </div>
+    <div class="pane phone">
+      <div class="frame">${cc()}</div>
+    </div>
+  </div>`;
+}
+
+const SCREENS = {both, deep, home, list, detail, supplement, archive, login, noTask, wecom, wecomLink};
+
+function go(s){ state.screen = s; render(); }
+function openDetail(){ state.screen = 'detail'; state.step = 0; render(); }
+function closeModal(){ state.modal = false; render(); }
+function openSheet(){ state.ccSheet = true; render(); }
+function sendCard(title){ state.ccTitle = title; state.ccSent = true; state.ccSheet = false; render(); }
+function gotoQ(n){ if(n>=0 && n<QS.length){ state.step = n; render(); } }
+function prevQ(){ if (state.step > 0) { state.step--; render(); } }
+function nextQ(){ if (state.step < QS.length - 1) { state.step++; render(); } else { state.submitted = true; state.modal = false; state.step = 0; go('list'); } }
+function sendCardD(t){ state.ccTitle = t; render(); }
+function render(){
+  if (!SCREENS[state.screen]) state.screen = 'both';
+  const stage = document.getElementById('stage');
+  const isDesktop = state.screen === 'ccDesktop' || state.screen === 'both';
+  stage.className = state.screen === 'both' ? 'is-both' : (isDesktop ? 'is-desktop' : 'is-phone');
+  const cap = document.querySelector('.wx-capsule');
+  if (cap) cap.style.display = isDesktop ? 'none' : 'flex';
+  stage.innerHTML = (SCREENS[state.screen] || SCREENS.both)();
+}
+render();
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
